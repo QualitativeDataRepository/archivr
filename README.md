@@ -31,6 +31,15 @@ arc_df$wayback_url # [1] http://web.archive.org/web/20181214234252/http://Www.ex
               # [3] http://web.archive.org/web/20181215081640/https://github.com/   
               # 3 Levels: http://web.archive.org/web/20181214234252/http://Www.example.com ...
 ```
+To check a list of urls in perma_cc, use:
+```
+arc_url_df <- archiv(list("www.example.com", "NOTAURL", "www.github.com"), "perma_cc")
+```
+
+or you may use both:
+```
+arc_url_df <- archiv(list("www.example.com", "NOTAURL", "www.github.com"), "both")
+```
 
 Archiv can also check a webpage for archived urls.
 
@@ -42,8 +51,8 @@ df <- data.frame(arc_url_df$url, arc_url_df$wayback_url)[8,]
 # 8 http://syr.edu http://web.archive.org/web/20170110050058/http://syr.edu/
 ```
 
-Future implementations will include checks in perma.cc (or both). Archiv will
-also become an R package.
+
+
 
 ## TESTING
 
