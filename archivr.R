@@ -18,6 +18,7 @@ library(stringr)
 
 #' Default url for the Wayback Machine
 .wb_available_url <- "http://archive.org/wayback/available?url="
+.perma_cc_api_url <- "https://api.perma.cc/v1/public/archives/?url="
 #' Global var for the API key for perma.cc
 .perma_cc_key <- ""
 
@@ -30,9 +31,26 @@ library(stringr)
 #'  web crawl.
 archiv <- function (lst, source="wayback") {
   if (source == "perma_cc") {
-    print ("This feature is not available... yet")
+    newlst <- lapply(lst, from_perma_cc)
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    colnames(df) <- c("url", "status", "available?", "perma_cc_url", "timestamp")
+    return(df)
   } else if (source == "both") {
-    print ("This feature is not available... yet")
+    newlst <- lapply(lst, function(x) {
+      wb <- from_wayback(x)
+      pc <- from_perma_cc(x)
+      result <- list(x, "000", FALSE, "url not found", "unknown", "url not found", "unknown")
+      if (as.logical((unname(unlist(wb)[3]))) && as.logical(unname(unlist(pc)[3]))) {
+        result <- c(wb$url, wb$archived_snapshots$closest$status,
+          wb$archived_snapshots$closest$available,
+          wb$archived_snapshots$closest$url,
+          wb$archived_snapshots$closest$timestamp, pc[[4]], pc[[5]])
+      }
+      return(result)
+    })
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    colnames(df) <- c("url", "status", "available?", "wayback_url", "wayback_timestamp", "perma_cc_url", "perma_cc_timestamp")
+    return(df)
   } else if (source == "wayback") {
     newlst <- lapply(lst, from_wayback)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
@@ -44,6 +62,13 @@ archiv <- function (lst, source="wayback") {
   }
 }
 
+
+#' Collect information on whether links in a url are archived.
+#'
+#' @param url The url to extract links from.
+#' @param source Either "wayback," "perma_cc" or "both".
+#' @return a dataframe containing the url, status, availability,
+#'   archived url(s) and timestamp(s)
 archiv.fromUrl <- function (url, source="wayback") {
   return(archiv(get_urls_from_webpage(url), source))
 }
@@ -66,6 +91,33 @@ from_wayback <- function (url) {
     result = reply
   }
   return (result)
+}
+
+#' Check whether a url is available in Perma.cc
+#'
+#' @param url The url to check.
+#' @return a vector containing
+#'   the original url.
+#'   the http status
+#'   TRUE if successful or FALSE
+#'   the archived url.
+#'   the last time the url was crawled.
+from_perma_cc <- function (url) {
+  envelop = paste0(.perma_cc_api_url, url)
+  reply <- fromJSON(envelop)
+  result <- list(url, "000", FALSE, "url not found", "unknown")
+  if (length(unlist(reply$objects))) {
+    step <- unlist(reply$objects)
+    status <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success", "200", "000")
+    available <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success", TRUE, FALSE)
+    playback_url <- ifelse(is.na(step["captures.playback_url"]), step["captures.playback_url1"], step["captures.playback_url"])
+    timestamp <- ifelse(is.na(step["creation_timestamp"]), "unknown", step["creation_timestamp"])
+    print (step["captures.playback_url1"])
+    print (playback_url)
+    result <- c(unname(step["url"]), unname(status), unname(available), unname(playback_url), unname(timestamp))
+    print(result)
+  }
+  return(result)
 }
 
 #' Set the api key(s) for Perma.cc apis, if required.
