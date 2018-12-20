@@ -1,3 +1,5 @@
+#' The following may not be necessary once packaging is set up.
+
 if(!"jsonlite" %in% rownames(installed.packages())) {
   install.packages("jsonlite", repos="http://cran.us.r-project.org")
 }
@@ -73,6 +75,10 @@ archiv.fromUrl <- function (url, source="wayback") {
   return(archiv(get_urls_from_webpage(url), source))
 }
 
+archiv.fromText <- function (fp, source="wayback") {
+  return(archiv(extract_urls_from_text(fp), source))
+}
+
 #' Check whether a url is available in the Wayback Machine
 #'
 #' @param url The url to check.
@@ -130,9 +136,39 @@ set_api_key <- function (key) {
     .perma_cc_key <<- key
 }
 
+#' Extracts the urls from a webpage.
+#'
+#' @param url The url to extract urls.
+#' @return a vector of urls.
 get_urls_from_webpage <- function (url) {
   pg <- read_html(url)
   lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
   Filter(function(x)
     startsWith(x, "http"), lst)
+}
+
+
+#' Get the urls from a text file or string
+#'
+#' @param fp A filepath or string.
+extract_urls_from_text <- function (fp) {
+  url_pattern <- "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+  text <- tryCatch({
+    readChar(fp, file.info(fp)$size)
+  }, warning = function(w) {
+    fp
+  }, error = function(e) {
+  }, finally = {
+  })
+  ext <- gregexpr(url_pattern, text)
+  result1 <- unique(unlist(regmatches(text, ext)))
+  result2 <- sapply(result1, function(x) {
+    last <- str_sub(x, start=-1)
+    if (last == ">" || last == ")") {
+      return(str_sub(x, 0, -2))
+    } else {
+      return(x)
+    }
+  })
+  return (result2)
 }
