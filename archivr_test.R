@@ -60,3 +60,11 @@ test_that("Parses links from Latex", {
   test2 <- archiv.fromText(latex)
   expect_equal(length(as.vector(test2$wayback_url)), 2)
 })
+
+test_that("Reads docx etc. from folders", {
+  filepath <- "./data/*.docx"
+  test <- extract_urls_from_folder(filepath)
+  expect_equal(unname(test), c("https://www.google.com/path/to/something",
+    "http://www.apple.com", "http://www.example.com.", "http://qdr.syr.edu.",
+  "http://www.uwaterloo.ca."))
+})

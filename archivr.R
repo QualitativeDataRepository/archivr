@@ -12,7 +12,11 @@ if(!"rvest" %in% rownames(installed.packages())) {
 if(!"stringr" %in% rownames(installed.packages())) {
   install.packages("stringr", repos="http://cran.us.r-project.org")
 }
+if(!"readtext" %in% rownames(installed.packages())) {
+  install.packages("readtext", repos="http://cran.us.r-project.org")
+}
 
+library(readtext)
 library(jsonlite)
 library(xml2)
 library(rvest)
@@ -160,6 +164,23 @@ extract_urls_from_text <- function (fp) {
   }, error = function(e) {
   }, finally = {
   })
+  ext <- gregexpr(url_pattern, text)
+  result1 <- unique(unlist(regmatches(text, ext)))
+  result2 <- sapply(result1, function(x) {
+    last <- str_sub(x, start=-1)
+    if (last == ">" || last == ")") {
+      return(str_sub(x, 0, -2))
+    } else {
+      return(x)
+    }
+  })
+  return (result2)
+}
+
+extract_urls_from_folder <- function (fp) {
+  url_pattern <- "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+  text <- readtext(fp)
+  text <- Reduce(paste, readtext(fp)$text)
   ext <- gregexpr(url_pattern, text)
   result1 <- unique(unlist(regmatches(text, ext)))
   result2 <- sapply(result1, function(x) {
