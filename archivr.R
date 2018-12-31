@@ -15,18 +15,58 @@ if(!"stringr" %in% rownames(installed.packages())) {
 if(!"readtext" %in% rownames(installed.packages())) {
   install.packages("readtext", repos="http://cran.us.r-project.org")
 }
+if(!"curl" %in% rownames(installed.packages())) {
+  install.packages("curl", repos="http://cran.us.r-project.org")
+}
 
 library(readtext)
 library(jsonlite)
 library(xml2)
 library(rvest)
 library(stringr)
+library(curl)
 
 #' Default url for the Wayback Machine
 .wb_available_url <- "http://archive.org/wayback/available?url="
 .perma_cc_api_url <- "https://api.perma.cc/v1/public/archives/?url="
+.perma_cc_post_api_url <- "https://api.perma.cc/v1/archives/?api_key="
 #' Global var for the API key for perma.cc
 .perma_cc_key <- ""
+
+
+#' Archive a list of urls in perma_cc.
+#'
+#' @param url_list A list of urls to archive.
+#' @return A dataframe containing the original urls, the urls to the
+#'   archived website, the screenshot and a timestamp.
+archiv <- function (url_list) {
+  newlst <- lapply(url_list, save_url)
+  df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+  colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot")
+  return(df)
+}
+
+save_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
+  if (method == "perma_cc") {
+    api_url <- paste0(.perma_cc_post_api_url, api)
+  }
+  setting <- new_handle()
+  handle_setopt(setting, customrequest = "POST")
+  handle_setform(setting, url = arc_url)
+  result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot")
+  r <- curl_fetch_memory(api_url, setting)
+  reply <- fromJSON(rawToChar(r$content))
+  if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
+    result <- "Please input your api key:\nUse 'setup_api_key(API_KEY)'"
+  } else if ((!(is.null(reply$error)))) {
+    result <- "Received an error reply, likely because your limit has been exceeded."
+  } else {
+    if (!(reply$url == "Not a valid URL.")) {
+      result <- c(reply$url, reply$guid, reply$archive_timestamp, reply$captures[1,]$playback_url, reply$captures[2,]$playback_url)
+    }
+    return(result)
+  }
+}
 
 #' Get archiving data from a list of Urls
 #'
@@ -35,7 +75,7 @@ library(stringr)
 #' @return A dataframe containing the original urls, their http status,
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
-archiv <- function (lst, source="wayback") {
+view_archiv <- function (lst, source="wayback") {
   if (source == "perma_cc") {
     newlst <- lapply(lst, from_perma_cc)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
@@ -75,12 +115,12 @@ archiv <- function (lst, source="wayback") {
 #' @param source Either "wayback," "perma_cc" or "both".
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-archiv.fromUrl <- function (url, source="wayback") {
-  return(archiv(get_urls_from_webpage(url), source))
+view_archiv.fromUrl <- function (url, source="wayback") {
+  return(view_archiv(get_urls_from_webpage(url), source))
 }
 
-archiv.fromText <- function (fp, source="wayback") {
-  return(archiv(extract_urls_from_text(fp), source))
+view_archiv.fromText <- function (fp, source="wayback") {
+  return(view_archiv(extract_urls_from_text(fp), source))
 }
 
 #' Check whether a url is available in the Wayback Machine
@@ -122,10 +162,7 @@ from_perma_cc <- function (url) {
     available <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success", TRUE, FALSE)
     playback_url <- ifelse(is.na(step["captures.playback_url"]), step["captures.playback_url1"], step["captures.playback_url"])
     timestamp <- ifelse(is.na(step["creation_timestamp"]), "unknown", step["creation_timestamp"])
-    print (step["captures.playback_url1"])
-    print (playback_url)
     result <- c(unname(step["url"]), unname(status), unname(available), unname(playback_url), unname(timestamp))
-    print(result)
   }
   return(result)
 }
@@ -137,7 +174,7 @@ from_perma_cc <- function (url) {
 #' @examples
 #' add("", 1)
 set_api_key <- function (key) {
-    .perma_cc_key <<- key
+  .perma_cc_key <<- key
 }
 
 #' Extracts the urls from a webpage.

@@ -16,7 +16,7 @@ test_that("Test getting real url from Wayback", {
 
 test_that("Archivr function returns proper df", {
   lurls <- c("www.example.com", "NOTAURL", "www.github.com")
-  test <- archiv(lurls, "wayback")
+  test <- view_archiv(lurls, "wayback")
   expectedA <- as.vector(lurls)
   expectedB <- c("200", "000", "200")
   expectedC <- c("http://web.archive.org/web/20181214200505/http://Example.com",
@@ -40,7 +40,7 @@ test_that("Parses links from markdown text", {
   expect_equal(unname(test), c("http://www.example.com",
     "http://www.github.com",
     "http://www.google.com", "http://www.apple.com"))
-  test2 <- archiv.fromText(md)
+  test2 <- view_archiv.fromText(md)
   expect_equal(length(as.vector(test2$wayback_url)), 4)
 })
 
@@ -57,7 +57,7 @@ test_that("Parses links from Latex", {
     '\\end{document}')
   test <- extract_urls_from_text(latex)
   expect_equal(unname(test), c("http://www.sharelatex.com", "https://www.google.com/file/path.html"))
-  test2 <- archiv.fromText(latex)
+  test2 <- view_archiv.fromText(latex)
   expect_equal(length(as.vector(test2$wayback_url)), 2)
 })
 
