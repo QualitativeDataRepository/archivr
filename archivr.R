@@ -28,11 +28,18 @@ library(curl)
 
 #' Default url for the Wayback Machine
 .wb_available_url <- "http://archive.org/wayback/available?url="
-.perma_cc_api_url <- "https://api.perma.cc/v1/public/archives/?url="
-.perma_cc_post_api_url <- "https://api.perma.cc/v1/archives/?api_key="
 #' Global var for the API key for perma.cc
 .perma_cc_key <- ""
-
+.wb_save_url <- "https://web.archive.org/save/"
+.perma_cc_api_url <- "https://api.perma.cc/v1/public/archives/?url="
+.perma_cc_post_api_url <- "https://api.perma.cc/v1/archives/?api_key="
+.perma_cc_post_batch_api_url <- "https://api.perma.cc/v1/archives/batches?api_key="
+.folder_id <- 1
+.perma_cc_status_url <- function (id, api=.perma_cc_key) {
+  url <- "https://api.perma.cc/v1/archives/batches/"
+  key <- paste0("?api_key=", api)
+  return (paste0(url, id, key))
+}
 
 #' Archive a list of urls in perma_cc.
 #'
@@ -42,8 +49,38 @@ library(curl)
 archiv <- function (url_list) {
   newlst <- lapply(url_list, save_url)
   df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-  colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot")
+  colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot", "perma_cc_short_url")
   return(df)
+}
+
+#' Save a batch of urls to a folder
+#' @param url_list A vector of urls to archive.
+#' @param api (Optional api key)
+#' @param folder (Mandatory, but defaults to .folder_id)
+save_batch <- function (url_list, api=.perma_cc_key, folder=.folder_id) {
+  api_url <- paste0(.perma_cc_post_batch_api_url, api)
+  print(api_url)
+  setting <- new_handle()
+  handle_setopt(setting, customrequest = "POST")
+  handle_setform(setting, urls=list_string(url_list), target_folder=folder)
+  r <- curl_fetch_memory(api_url, setting)
+  print(r)
+  reply <- fromJSON(rawToChar(r$content))
+  print(reply)
+  if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
+    result <- "Please input your api key:\nUse 'set_api_key(API_KEY)'"
+  } else if ((!(is.null(reply$error)))) {
+    result <- "Received an error reply, likely because your limit has been exceeded."
+  } else {
+    result <- reply$id
+    return(result)
+  }
+}
+
+list_string <- function (url_list) {
+  quotes <- paste('"', url_list, '"', sep="")
+  string <- paste (quotes, sep=", ", collapse=", ")
+  return (paste0("'[", string, "]'"))
 }
 
 save_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
@@ -53,16 +90,18 @@ save_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
   setting <- new_handle()
   handle_setopt(setting, customrequest = "POST")
   handle_setform(setting, url = arc_url)
-  result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot")
+  result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
   r <- curl_fetch_memory(api_url, setting)
   reply <- fromJSON(rawToChar(r$content))
   if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
-    result <- "Please input your api key:\nUse 'setup_api_key(API_KEY)'"
+    result <- "Please input your api key:\nUse 'set_api_key(API_KEY)'"
   } else if ((!(is.null(reply$error)))) {
     result <- "Received an error reply, likely because your limit has been exceeded."
   } else {
     if (!(reply$url == "Not a valid URL.")) {
-      result <- c(reply$url, reply$guid, reply$archive_timestamp, reply$captures[1,]$playback_url, reply$captures[2,]$playback_url)
+      result <- c(reply$url, reply$guid, reply$archive_timestamp,
+        reply$captures[1,]$playback_url, reply$captures[2,]$playback_url,
+      paste0("https://perma.cc/", reply$guid))
     }
     return(result)
   }
