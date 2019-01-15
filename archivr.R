@@ -85,12 +85,21 @@ save_batch <- function (url_list, api=.perma_cc_key, folder=.folder_id) {
   }
 }
 
+#' Creates a json string from a list of urls.
+#'
+#' @param url_list A list of urls.
+#' @return A json string representing the list.
 list_string <- function (url_list) {
   quotes <- paste('"', url_list, '"', sep="")
   string <- paste (quotes, sep=", ", collapse=", ")
   return (paste0("'[", string, "]'"))
 }
 
+#' Saves a single url in either perma.cc or the wayback machine.
+#'
+#' @param arc_url The url to archive.
+#' @param method Either "perma_cc" or the default, "wayback."
+#' @return A list or object representing the result.
 save_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
   if (method == "perma_cc") {
     api_url <- paste0(.perma_cc_post_api_url, api)
@@ -118,6 +127,9 @@ save_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
 
 }
 
+#' Save a url on the wayback machine.
+#' @param arc_url - the url to archive.
+#' @return A list or object representing the result.
 save_wayback <- function (arc_url) {
   envelop <- paste0(.wb_save_url, arc_url)
   reply <- curl_fetch_memory(envelop)
@@ -182,8 +194,34 @@ view_archiv.fromUrl <- function (url, source="wayback") {
   return(view_archiv(get_urls_from_webpage(url), source))
 }
 
+#' Collect information on whether links in a file are archived.
+#'
+#' @param fp The filepath to extract links from.
+#' @param source Either "wayback," "perma_cc" or "both".
+#' @return a dataframe containing the url, status, availability,
+#'   archived url(s) and timestamp(s)
 view_archiv.fromText <- function (fp, source="wayback") {
   return(view_archiv(extract_urls_from_text(fp), source))
+}
+
+#' Collect information on whether links in a url are archived.
+#'
+#' @param url The url to extract links from.
+#' @param source Either "wayback," "perma_cc" or "both".
+#' @return a dataframe containing the url, status, availability,
+#'   archived url(s) and timestamp(s)
+save_archiv.fromUrl <- function (url, source="wayback") {
+  return(archiv(extract_urls_from_webpage(url), source))
+}
+
+#' Collect information on whether links in a file are archived.
+#'
+#' @param fp The filepath to extract links from.
+#' @param source Either "wayback," "perma_cc" or "both".
+#' @return a dataframe containing the url, status, availability,
+#'   archived url(s) and timestamp(s)
+save_archiv.fromText <- function (fp, source="wayback") {
+  return(archiv(extract_urls_from_text(fp), source))
 }
 
 #' Check whether a url is available in the Wayback Machine
