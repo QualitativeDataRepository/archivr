@@ -184,17 +184,17 @@ archiv_wayback <- function (arc_url) {
 #' Get archiving data from a list of Urls
 #'
 #' @param lst A list of urls to check.
-#' @param source "wayback", "perma_cc" or "both".
+#' @param method "wayback", "perma_cc" or "both".
 #' @return A dataframe containing the original urls, their http status,
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
-view_archiv <- function (lst, source="wayback") {
-  if (source == "perma_cc") {
+view_archiv <- function (lst, method="wayback") {
+  if (method == "perma_cc") {
     newlst <- lapply(lst, from_perma_cc)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
     colnames(df) <- c("url", "status", "available?", "perma_cc_url", "timestamp")
     return(df)
-  } else if (source == "both") {
+  } else if (method == "both") {
     newlst <- lapply(lst, function(x) {
       wb <- from_wayback(x)
       pc <- from_perma_cc(x)
@@ -210,13 +210,13 @@ view_archiv <- function (lst, source="wayback") {
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
     colnames(df) <- c("url", "status", "available?", "wayback_url", "wayback_timestamp", "perma_cc_url", "perma_cc_timestamp")
     return(df)
-  } else if (source == "wayback") {
+  } else if (method == "wayback") {
     newlst <- lapply(lst, from_wayback)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
     colnames(df) <- c("url", "status", "available?", "wayback_url", "timestamp")
     return (df)
   } else {
-    print ("Could not confirm source.")
+    print ("Could not confirm method.")
     return(FALSE)
   }
 }
@@ -225,41 +225,41 @@ view_archiv <- function (lst, source="wayback") {
 #' Collect information on whether links in a url are archived.
 #'
 #' @param url The url to extract links from.
-#' @param source Either "wayback," "perma_cc" or "both".
+#' @param method Either "wayback," "perma_cc" or "both".
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-view_archiv.fromUrl <- function (url, source="wayback") {
-  return(view_archiv(extract_urls_from_webpage(url), source))
+view_archiv.fromUrl <- function (url, method="wayback") {
+  return(view_archiv(extract_urls_from_webpage(url), method))
 }
 
 #' Collect information on whether links in a file are archived.
 #'
 #' @param fp The filepath to extract links from.
-#' @param source Either "wayback," "perma_cc" or "both".
+#' @param method Either "wayback," "perma_cc" or "both".
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-view_archiv.fromText <- function (fp, source="wayback") {
-  return(view_archiv(extract_urls_from_text(fp), source))
+view_archiv.fromText <- function (fp, method="wayback") {
+  return(view_archiv(extract_urls_from_text(fp), method))
 }
 
 #' Collect information on whether links in a url are archived.
 #'
 #' @param url The url to extract links from.
-#' @param source Either "wayback," "perma_cc" or "both".
+#' @param method Either "wayback," "perma_cc" or "both".
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-archiv.fromUrl <- function (url, source="wayback") {
-  return(archiv(extract_urls_from_webpage(url), source))
+archiv.fromUrl <- function (url, method="wayback") {
+  return(archiv(extract_urls_from_webpage(url), method))
 }
 
 #' Collect information on whether links in a file are archived.
 #'
 #' @param fp The filepath to extract links from.
-#' @param source Either "wayback," "perma_cc" or "both".
+#' @param method Either "wayback," "perma_cc" or "both".
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-archiv.fromText <- function (fp, source="wayback") {
-  return(archiv(extract_urls_from_text(fp), source))
+archiv.fromText <- function (fp, method="wayback") {
+  return(archiv(extract_urls_from_text(fp), method))
 }
 
 #' Check whether a url is available in the Wayback Machine
