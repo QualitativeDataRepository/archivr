@@ -57,18 +57,29 @@ library(tools)
 
 #' Default url for the Wayback Machine
 .wb_available_url <- "http://archive.org/wayback/available?url="
+.perma_cc_user_url <- "https://api.perma.cc/v1/user/?api_key="
 #' Global var for the API key for perma.cc
 .perma_cc_key <- ""
+.perma_cc_folder_pref <- "https://api.perma.cc/v1/folders/"
 .wb_save_url <- "https://web.archive.org/save/"
 .perma_cc_api_url <- "https://api.perma.cc/v1/public/archives/?url="
 .perma_cc_post_api_url <- "https://api.perma.cc/v1/archives/?api_key="
 .perma_cc_post_batch_api_url <- "https://api.perma.cc/v1/archives/batches?api_key="
-.folder_id <- 1
+.folder_id <- function() {
+  reply <- get_default_folder()
+  if (get_default_folder() == FALSE) {
+    print ("Please use set_api_key(YOUR_KEY) to set your api key")
+  } else {
+    print (paste("Setting default folder to ", reply))
+  }
+  return (reply)
+}
 .perma_cc_status_url <- function (id, api=.perma_cc_key) {
   url <- "https://api.perma.cc/v1/archives/batches/"
   key <- paste0("?api_key=", api)
   return (paste0(url, id, key))
 }
+.perma_cc_folder <- .folder_id()
 
 #' Archive a list of urls in perma_cc.
 #'
@@ -126,12 +137,13 @@ list_string <- function (url_list) {
 #' @param arc_url The url to archive.
 #' @param method Either "perma_cc" or the default, "wayback."
 #' @return A list or object representing the result.
-archiv_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
+archiv_url <- function (arc_url, fold=.perma_cc_folder, api=.perma_cc_key, method="perma_cc") {
   if (method == "perma_cc") {
+    folder_url <- paste0()
     api_url <- paste0(.perma_cc_post_api_url, api)
     setting <- new_handle()
     handle_setopt(setting, customrequest = "POST")
-    handle_setform(setting, url = arc_url)
+    handle_setform(setting, url = arc_url, folder = fold)
     result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
     r <- curl_fetch_memory(api_url, setting)
     reply <- fromJSON(rawToChar(r$content))
@@ -323,7 +335,7 @@ extract_urls_from_text <- function (fp) {
   url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
   text <- tryCatch({
     if (file_ext(fp) == "docx") {
-      paste(read_docx(fp, trim=FALSE))
+      gsub("\\s", " ", readtext(fp)$text)
     } else {
       readChar(fp, file.info(fp)$size)
     }
@@ -345,6 +357,9 @@ extract_urls_from_text <- function (fp) {
   return (result2)
 }
 
+#' Get the urls from all text files in a folder
+#'
+#' @param fp A filepath or string.
 extract_urls_from_folder <- function (fp) {
   url_pattern <- "(http[s]?:)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?"
   text <- readtext(fp)
@@ -360,4 +375,68 @@ extract_urls_from_folder <- function (fp) {
     }
   })
   return (result2)
+}
+
+#' Get the folder id and name from all text files in a perma.cc folder
+#'
+#' @return The id and name of the first top folder (usually "Personal Links")
+#'    in perma.cc
+get_default_folder <- function () {
+  if (.perma_cc_key == "") {
+    reply <- FALSE
+  } else {
+    envelop = paste0(.perma_cc_user_url, .perma_cc_key)
+    data <- fromJSON(envelop)
+    id <- data$top_level_folders[1]$id
+    folder_name <- data$top_level_folders[1]$name
+    reply <- c(id, folder_name)
+  }
+  return(reply)
+}
+
+#' Works with get_subfolders to flatten the folder ids tree
+#' @param folder_list a list of perma.cc folder objects
+#' @return A list of vectors with the id and name.
+check_folder <- function(folder_list) {
+  if (is.null(folder_list)) {
+    reply <- folder_list
+  } else if (folder_list['has_children'] == "FALSE") {
+    rbind(c(folder_list['id'], folder_list['name']))
+  } else {
+    rbind(unname(c(folder_list['id'], folder_list['name'])), get_subfolders(folder_list['id']))
+  }
+}
+
+#' Works with check_folder to flatten folder ids tree
+#' @param id A folder id
+#' @return A list of vectors with the id and name.
+get_subfolders <- function (id) {
+  if (.perma_cc_key == "") {
+    NULL
+  } else if (is.null(id)) {
+    NULL
+  } else {
+    .perma_cc_folder_suff <- paste0("/folders?api_key=", .perma_cc_key)
+    envelop <- paste0(.perma_cc_folder_pref, id, .perma_cc_folder_suff)
+    data <- fromJSON(envelop)$objects
+    reply <- NULL
+    for (row in 1:nrow(data)) {
+      fold <- check_folder(data[row,])
+      reply <- rbind(reply, fold)
+    }
+  return(reply)
+  }
+}
+
+
+#' Get the folder ids starting from the default folder.
+#' @return A list of vectors with the top folder and all its children.
+get_folder_ids <- function () {
+  if (.perma_cc_key == "") {
+    reply <- FALSE
+  } else {
+    envelop = paste0(.perma_cc_user_url, .perma_cc_key)
+    data <- fromJSON(envelop)$top_level_folders
+  }
+  return (check_folder(data[1,]))
 }
