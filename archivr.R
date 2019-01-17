@@ -229,7 +229,7 @@ view_archiv <- function (lst, source="wayback") {
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
 view_archiv.fromUrl <- function (url, source="wayback") {
-  return(view_archiv(get_urls_from_webpage(url), source))
+  return(view_archiv(extract_urls_from_webpage(url), source))
 }
 
 #' Collect information on whether links in a file are archived.
@@ -320,7 +320,7 @@ set_api_key <- function (key) {
 #'
 #' @param url The url to extract urls.
 #' @return a vector of urls.
-get_urls_from_webpage <- function (url) {
+extract_urls_from_webpage <- function (url) {
   pg <- read_html(url)
   lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
   Filter(function(x)
