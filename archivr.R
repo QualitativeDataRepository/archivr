@@ -1,3 +1,24 @@
+#' Copyright <2019> <Qualitative Data Repository, Syracuse University>
+
+#' Permission is hereby granted, free of charge, to any person obtaining a copy
+#' of this software and associated documentation files (the "Software"), to deal
+#' in the Software without restriction, including without limitation the rights
+#' to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#' copies of the Software, and to permit persons to whom the Software is
+#' furnished to do so, subject to the following conditions:
+
+#' The above copyright notice and this permission notice shall be included in
+#' all copies or substantial portions of the Software.
+
+#' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#' AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#' THE SOFTWARE.
+
+
 #' The following may not be necessary once packaging is set up.
 
 if(!"jsonlite" %in% rownames(installed.packages())) {
@@ -49,23 +70,23 @@ library(curl)
 #'   archived website, the screenshot and a timestamp.
 archiv <- function (url_list, method="wayback") {
   if (method == "perma_cc") {
-    newlst <- lapply(url_list, save_url)
+    newlst <- lapply(url_list, archiv_url)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
     colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot", "perma_cc_short_url")
     return(df)
   } else {
-    newlst <- lapply(url_list, save_wayback)
+    newlst <- lapply(url_list, archiv_wayback)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
     colnames(df) <- c("url", "status", "available?", "wayback_url", "timestamp")
     return (df)
   }
 }
 
-#' Save a batch of urls to a folder
+#' Save a batch of urls to a folder - THIS CURRENTLY DOES NOT WORK.
 #' @param url_list A vector of urls to archive.
 #' @param api (Optional api key)
 #' @param folder (Mandatory, but defaults to .folder_id)
-save_batch <- function (url_list, api=.perma_cc_key, folder=.folder_id) {
+archiv_batch <- function (url_list, api=.perma_cc_key, folder=.folder_id) {
   api_url <- paste0(.perma_cc_post_batch_api_url, api)
   print(api_url)
   setting <- new_handle()
@@ -100,7 +121,7 @@ list_string <- function (url_list) {
 #' @param arc_url The url to archive.
 #' @param method Either "perma_cc" or the default, "wayback."
 #' @return A list or object representing the result.
-save_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
+archiv_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
   if (method == "perma_cc") {
     api_url <- paste0(.perma_cc_post_api_url, api)
     setting <- new_handle()
@@ -122,7 +143,7 @@ save_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
       return(result)
     }
   } else if (method == "wayback") {
-    return (save_wayback(arc_url))
+    return (archiv_wayback(arc_url))
   }
 
 }
@@ -130,7 +151,7 @@ save_url <- function (arc_url, api=.perma_cc_key, method="perma_cc") {
 #' Save a url on the wayback machine.
 #' @param arc_url - the url to archive.
 #' @return A list or object representing the result.
-save_wayback <- function (arc_url) {
+archiv_wayback <- function (arc_url) {
   envelop <- paste0(.wb_save_url, arc_url)
   reply <- curl_fetch_memory(envelop)
   if (reply$status_code == 200) {
@@ -210,7 +231,7 @@ view_archiv.fromText <- function (fp, source="wayback") {
 #' @param source Either "wayback," "perma_cc" or "both".
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-save_archiv.fromUrl <- function (url, source="wayback") {
+archiv.fromUrl <- function (url, source="wayback") {
   return(archiv(extract_urls_from_webpage(url), source))
 }
 
@@ -220,7 +241,7 @@ save_archiv.fromUrl <- function (url, source="wayback") {
 #' @param source Either "wayback," "perma_cc" or "both".
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-save_archiv.fromText <- function (fp, source="wayback") {
+archiv.fromText <- function (fp, source="wayback") {
   return(archiv(extract_urls_from_text(fp), source))
 }
 
@@ -294,7 +315,7 @@ get_urls_from_webpage <- function (url) {
 #'
 #' @param fp A filepath or string.
 extract_urls_from_text <- function (fp) {
-  url_pattern <- "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+  url_pattern <- "^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
   text <- tryCatch({
     readChar(fp, file.info(fp)$size)
   }, warning = function(w) {
@@ -316,7 +337,7 @@ extract_urls_from_text <- function (fp) {
 }
 
 extract_urls_from_folder <- function (fp) {
-  url_pattern <- "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+  url_pattern <- "^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
   text <- readtext(fp)
   text <- Reduce(paste, readtext(fp)$text)
   ext <- gregexpr(url_pattern, text)
