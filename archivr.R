@@ -39,13 +39,21 @@ if(!"readtext" %in% rownames(installed.packages())) {
 if(!"curl" %in% rownames(installed.packages())) {
   install.packages("curl", repos="http://cran.us.r-project.org")
 }
+if (!"pander" %in% rownames(installed.packages())) {
+  install.packages("pander", repos="http://cran.us.r-project.org")
+}
+if(!"textreadr" %in% rownames(installed.packages())) {
+  install.packages("textreadr", repos="http://cran.us.r-project.org")
+}
 
 library(readtext)
+library(textreadr)
 library(jsonlite)
 library(xml2)
 library(rvest)
 library(stringr)
 library(curl)
+library(tools)
 
 #' Default url for the Wayback Machine
 .wb_available_url <- "http://archive.org/wayback/available?url="
@@ -88,14 +96,11 @@ archiv <- function (url_list, method="wayback") {
 #' @param folder (Mandatory, but defaults to .folder_id)
 archiv_batch <- function (url_list, api=.perma_cc_key, folder=.folder_id) {
   api_url <- paste0(.perma_cc_post_batch_api_url, api)
-  print(api_url)
   setting <- new_handle()
   handle_setopt(setting, customrequest = "POST")
   handle_setform(setting, urls=list_string(url_list), target_folder=folder)
   r <- curl_fetch_memory(api_url, setting)
-  print(r)
   reply <- fromJSON(rawToChar(r$content))
-  print(reply)
   if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
     result <- "Please input your api key:\nUse 'set_api_key(API_KEY)'"
   } else if ((!(is.null(reply$error)))) {
@@ -315,9 +320,13 @@ get_urls_from_webpage <- function (url) {
 #'
 #' @param fp A filepath or string.
 extract_urls_from_text <- function (fp) {
-  url_pattern <- "^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
+  url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
   text <- tryCatch({
-    readChar(fp, file.info(fp)$size)
+    if (file_ext(fp) == "docx") {
+      paste(read_docx(fp, trim=FALSE))
+    } else {
+      readChar(fp, file.info(fp)$size)
+    }
   }, warning = function(w) {
     fp
   }, error = function(e) {
@@ -327,7 +336,7 @@ extract_urls_from_text <- function (fp) {
   result1 <- unique(unlist(regmatches(text, ext)))
   result2 <- sapply(result1, function(x) {
     last <- str_sub(x, start=-1)
-    if (last == ">" || last == ")") {
+    if (last == ">" || last == ")" || last ==",") {
       return(str_sub(x, 0, -2))
     } else {
       return(x)
@@ -337,7 +346,7 @@ extract_urls_from_text <- function (fp) {
 }
 
 extract_urls_from_folder <- function (fp) {
-  url_pattern <- "^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
+  url_pattern <- "(http[s]?:)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?"
   text <- readtext(fp)
   text <- Reduce(paste, readtext(fp)$text)
   ext <- gregexpr(url_pattern, text)
