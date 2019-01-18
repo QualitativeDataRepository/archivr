@@ -79,7 +79,7 @@ library(tools)
   key <- paste0("?api_key=", api)
   return (paste0(url, id, key))
 }
-.perma_cc_folder <- .folder_id()
+.perma_cc_folder_id <- .folder_id()
 
 #' Archive a list of urls in perma_cc.
 #'
@@ -137,7 +137,7 @@ list_string <- function (url_list) {
 #' @param arc_url The url to archive.
 #' @param method Either "perma_cc" or the default, "wayback."
 #' @return A list or object representing the result.
-archiv_url <- function (arc_url, fold=.perma_cc_folder, api=.perma_cc_key, method="perma_cc") {
+archiv_url <- function (arc_url, fold=.perma_cc_folder_id, api=.perma_cc_key, method="perma_cc") {
   if (method == "perma_cc") {
     folder_url <- paste0()
     api_url <- paste0(.perma_cc_post_api_url, api)
@@ -309,11 +309,18 @@ from_perma_cc <- function (url) {
 #' Set the api key(s) for Perma.cc apis, if required.
 #'
 #' @param key The Api Key.
-#' @return TRUE
-#' @examples
-#' add("", 1)
 set_api_key <- function (key) {
   .perma_cc_key <<- key
+}
+
+#' Set the folder to save items in Perma.cc.
+#'
+#' @param id The folder id. This will be a string of numbers. If you do not
+#'   know your folder id, get_folder_ids() will output a complete list of
+#'   folders
+#' @return TRUE
+set_folder_id <- function (id) {
+  .perma_cc_folder_id <<- id
 }
 
 #' Extracts the urls from a webpage.
