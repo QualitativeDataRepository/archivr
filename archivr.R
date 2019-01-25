@@ -405,11 +405,15 @@ extract_urls_from_folder <- function (fp) {
 #' @param folder_list a list of perma.cc folder objects
 #' @return A list of vectors with the id and name.
 check_folder <- function(folder_list) {
+  print(folder_list)
   if (is.null(folder_list)) {
-    reply <- folder_list
+    print("is null")
+    folder_list
   } else if (folder_list['has_children'] == "FALSE") {
-    rbind(c(folder_list['id'], folder_list['name']))
+    print("is false")
+    subset(folder_list, select=c("id", "name"))
   } else {
+    print("children")
     rbind(unname(c(folder_list['id'], folder_list['name'])), get_subfolders(folder_list['id']))
   }
 }
@@ -444,9 +448,8 @@ get_folder_ids <- function () {
   } else {
     envelop = paste0(.perma_cc_user_url, .perma_cc_key)
     data <- fromJSON(envelop)$top_level_folders
-  }
-  for (row in 1:nrow(data))
-    fold <- check_folder(data[row,])
-    reply <- rbind(reply, fold)
+    for (row in 1:nrow(data))
+      reply <- rbind(reply, check_folder(data[row,]))
+    }
   return (reply)
 }
