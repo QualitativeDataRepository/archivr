@@ -55,6 +55,23 @@ library(stringr)
 library(curl)
 library(tools)
 
+#' Get the folder id and name from all text files in a perma.cc folder
+#'
+#' @return The id and name of the first top folder (usually "Personal Links")
+#'    in perma.cc
+get_default_folder <- function (default=1) {
+  if (.perma_cc_key == "") {
+    reply <- FALSE
+  } else {
+    envelop = paste0(.perma_cc_user_url, .perma_cc_key)
+    data <- fromJSON(envelop)
+    id <- data$top_level_folders[default]$id
+    folder_name <- data$top_level_folders[default]$name
+    reply <- c(id, folder_name)
+  }
+  return(reply)
+}
+
 #' Default url for the Wayback Machine
 .wb_available_url <- "http://archive.org/wayback/available?url="
 .perma_cc_user_url <- "https://api.perma.cc/v1/user/?api_key="
@@ -384,23 +401,6 @@ extract_urls_from_folder <- function (fp) {
   return (result2)
 }
 
-#' Get the folder id and name from all text files in a perma.cc folder
-#'
-#' @return The id and name of the first top folder (usually "Personal Links")
-#'    in perma.cc
-get_default_folder <- function () {
-  if (.perma_cc_key == "") {
-    reply <- FALSE
-  } else {
-    envelop = paste0(.perma_cc_user_url, .perma_cc_key)
-    data <- fromJSON(envelop)
-    id <- data$top_level_folders[1]$id
-    folder_name <- data$top_level_folders[1]$name
-    reply <- c(id, folder_name)
-  }
-  return(reply)
-}
-
 #' Works with get_subfolders to flatten the folder ids tree
 #' @param folder_list a list of perma.cc folder objects
 #' @return A list of vectors with the id and name.
@@ -435,15 +435,18 @@ get_subfolders <- function (id) {
   }
 }
 
-
 #' Get the folder ids starting from the default folder.
 #' @return A list of vectors with the top folder and all its children.
 get_folder_ids <- function () {
+  reply <- NULL
   if (.perma_cc_key == "") {
     reply <- FALSE
   } else {
     envelop = paste0(.perma_cc_user_url, .perma_cc_key)
     data <- fromJSON(envelop)$top_level_folders
   }
-  return (check_folder(data[1,]))
+  for (row in 1:nrow(data))
+    fold <- check_folder(data[row,])
+    reply <- rbind(reply, fold)
+  return (reply)
 }
