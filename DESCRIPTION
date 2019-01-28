@@ -1,0 +1,25 @@
+Package: archivr
+Title: Archivr - Save Your Websites in Perma.cc or the Wayback Machine
+Version: 0.0.1
+Authors@R: c(person("Ryan", "Deschamps", email = "ryan.deschamps@gmail.com",
+                  role = c("aut", "cre")), 
+                  person("Qualitative Data", "Repository", email = "qdr@syr.edu", 
+                  role = c("own", "pat")),
+                  person("Sebastian", "Karcher", email = "skarcher@syr.edu", 
+                  role = c("edt", "exp")))
+Description: Archivr is a toolkit for the long-run archiving of Qualitative data.
+    It takes a list of urls and uses either the perma.cc or Wayback Machine
+    archives to store the webpages for future reference. It will also parse
+    word or html documents for urls to be archived.
+Maintainer: Ryan Deschamps <ryan.deschamps@gmail.com>
+Depends: R (>= 3.1.0)
+Imports:
+    rvest,
+    readtext,
+    xml2,
+    stringr,
+    curl
+License: MIT
+LazyData: true
+RoxygenNote: 6.1.0.9000
+Encoding: UTF-8

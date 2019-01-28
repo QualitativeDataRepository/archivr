@@ -19,35 +19,16 @@
 #' THE SOFTWARE.
 
 
-#' The following may not be necessary once packaging is set up.
-
-if(!"jsonlite" %in% rownames(installed.packages())) {
-  install.packages("jsonlite", repos="http://cran.us.r-project.org")
-}
-if(!"xml2" %in% rownames(installed.packages())) {
-  install.packages("xml2", repos="http://cran.us.r-project.org")
-}
-if(!"rvest" %in% rownames(installed.packages())) {
-  install.packages("rvest", repos="http://cran.us.r-project.org")
-}
-if(!"stringr" %in% rownames(installed.packages())) {
-  install.packages("stringr", repos="http://cran.us.r-project.org")
-}
-if(!"readtext" %in% rownames(installed.packages())) {
-  install.packages("readtext", repos="http://cran.us.r-project.org")
-}
-if(!"curl" %in% rownames(installed.packages())) {
-  install.packages("curl", repos="http://cran.us.r-project.org")
-}
-if (!"pander" %in% rownames(installed.packages())) {
-  install.packages("pander", repos="http://cran.us.r-project.org")
-}
-if(!"textreadr" %in% rownames(installed.packages())) {
-  install.packages("textreadr", repos="http://cran.us.r-project.org")
-}
+#' Archivr: Save Your Websites in Perma.cc or the Wayback Machine
+#'
+#' Archivr is a toolkit for the long-run archiving of Qualitative data.
+#' It takes a list of urls and uses either the perma.cc or Wayback Machine
+#' archives to store the webpages for future reference. It will also parse
+#' word or html documents for urls to be archived.
+#' @docType package
+#' @name archivr
 
 library(readtext)
-library(textreadr)
 library(jsonlite)
 library(xml2)
 library(rvest)
@@ -102,6 +83,7 @@ get_default_folder <- function (default=1) {
 #'
 #' @param url_list A list of urls to archive.
 #' @param method Either "wayback" or "perma_cc." Defaults to "wayback."
+#' @export
 #' @return A dataframe containing the original urls, the urls to the
 #'   archived website, the screenshot and a timestamp.
 archiv <- function (url_list, method="wayback") {
@@ -153,6 +135,7 @@ list_string <- function (url_list) {
 #'
 #' @param arc_url The url to archive.
 #' @param method Either "perma_cc" or the default, "wayback."
+#' @export
 #' @return A list or object representing the result.
 archiv_url <- function (arc_url, fold=.perma_cc_folder_id, api=.perma_cc_key, method="perma_cc") {
   if (method == "perma_cc") {
@@ -184,6 +167,7 @@ archiv_url <- function (arc_url, fold=.perma_cc_folder_id, api=.perma_cc_key, me
 
 #' Save a url on the wayback machine.
 #' @param arc_url - the url to archive.
+#' @export
 #' @return A list or object representing the result.
 archiv_wayback <- function (arc_url) {
   envelop <- paste0(.wb_save_url, arc_url)
@@ -202,6 +186,7 @@ archiv_wayback <- function (arc_url) {
 #'
 #' @param lst A list of urls to check.
 #' @param method "wayback", "perma_cc" or "both".
+#' @export
 #' @return A dataframe containing the original urls, their http status,
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
@@ -243,6 +228,7 @@ view_archiv <- function (lst, method="wayback") {
 #'
 #' @param url The url to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
+#' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
 view_archiv.fromUrl <- function (url, method="wayback") {
@@ -253,6 +239,7 @@ view_archiv.fromUrl <- function (url, method="wayback") {
 #'
 #' @param fp The filepath to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
+#' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
 view_archiv.fromText <- function (fp, method="wayback") {
@@ -263,6 +250,7 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #'
 #' @param url The url to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
+#' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
 archiv.fromUrl <- function (url, method="wayback") {
@@ -273,6 +261,7 @@ archiv.fromUrl <- function (url, method="wayback") {
 #'
 #' @param fp The filepath to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
+#' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
 archiv.fromText <- function (fp, method="wayback") {
@@ -326,6 +315,7 @@ from_perma_cc <- function (url) {
 #' Set the api key(s) for Perma.cc apis, if required.
 #'
 #' @param key The Api Key.
+#' @export
 set_api_key <- function (key) {
   .perma_cc_key <<- key
 }
@@ -335,6 +325,7 @@ set_api_key <- function (key) {
 #' @param id The folder id. This will be a string of numbers. If you do not
 #'   know your folder id, get_folder_ids() will output a complete list of
 #'   folders
+#' @export
 #' @return TRUE
 set_folder_id <- function (id) {
   .perma_cc_folder_id <<- id
@@ -440,6 +431,7 @@ get_subfolders <- function (id) {
 }
 
 #' Get the folder ids starting from the default folder.
+#' @export
 #' @return A list of vectors with the top folder and all its children.
 get_folder_ids <- function () {
   reply <- NULL
