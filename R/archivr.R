@@ -248,7 +248,7 @@ view_archiv.fromText <- function (fp, method="wayback") {
   return(view_archiv(extract_urls_from_text(fp), method))
 }
 
-#' Collect information on whether links in a url are archived.
+#' Save the links in a url in perma.cc or Wayback.
 #'
 #' @param url The url to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
@@ -259,7 +259,7 @@ archiv.fromUrl <- function (url, method="wayback") {
   return(archiv(extract_urls_from_webpage(url), method))
 }
 
-#' Collect information on whether links in a file are archived.
+#' Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.
 #'
 #' @param fp The filepath to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
