@@ -42,10 +42,11 @@ library(tools)
 #' @return The id and name of the first top folder (usually "Personal Links")
 #'    in perma.cc
 get_default_folder <- function (default=1) {
-  if (.perma_cc_key == "") {
+  perma_cc_key <- get(.perma_cc_key, envir=archiv_env)
+  if (perma_cc_key == "") {
     reply <- FALSE
   } else {
-    envelop = paste0(.perma_cc_user_url, .perma_cc_key)
+    envelop = paste0(.perma_cc_user_url, perma_cc_key)
     data <- fromJSON(envelop)
     id <- data$top_level_folders[default]$id
     folder_name <- data$top_level_folders[default]$name
@@ -54,6 +55,7 @@ get_default_folder <- function (default=1) {
   return(reply)
 }
 
+archiv_env <- new.env()
 #' Default url for the Wayback Machine
 .wb_available_url <- "http://archive.org/wayback/available?url="
 .perma_cc_user_url <- "https://api.perma.cc/v1/user/?api_key="
@@ -73,7 +75,7 @@ get_default_folder <- function (default=1) {
   }
   return (reply)
 }
-.perma_cc_status_url <- function (id, api=.perma_cc_key) {
+.perma_cc_status_url <- function (id, api=get(.perma_cc_key, envir=archiv_env) {
   url <- "https://api.perma.cc/v1/archives/batches/"
   key <- paste0("?api_key=", api)
   return (paste0(url, id, key))
@@ -105,7 +107,7 @@ archiv <- function (url_list, method="wayback") {
 #' @param url_list A vector of urls to archive.
 #' @param api (Optional api key)
 #' @param folder (Mandatory, but defaults to .folder_id)
-archiv_batch <- function (url_list, api=.perma_cc_key, folder=.folder_id) {
+archiv_batch <- function (url_list, api=get(.perma_cc_key, envir=archiv_env), folder=.folder_id) {
   api_url <- paste0(.perma_cc_post_batch_api_url, api)
   setting <- new_handle()
   handle_setopt(setting, customrequest = "POST")
@@ -139,7 +141,7 @@ list_string <- function (url_list) {
 #' @param method Either "perma_cc" or the default, "wayback."
 #' @export
 #' @return A list or object representing the result.
-archiv_url <- function (arc_url, fold=.perma_cc_folder_id, api=.perma_cc_key, method="perma_cc") {
+archiv_url <- function (arc_url, fold=.perma_cc_folder_id, api=get(.perma_cc_key, envir=archiv_env), method="perma_cc") {
   if (method == "perma_cc") {
     folder_url <- paste0()
     api_url <- paste0(.perma_cc_post_api_url, api)
@@ -325,7 +327,7 @@ from_perma_cc <- function (url) {
 #' @param key The Api Key.
 #' @export
 set_api_key <- function (key) {
-  .perma_cc_key <<- key
+  assign(.perma_cc_key, key, env=archiv_env)
 }
 
 #' Set the folder to save items in Perma.cc.
@@ -336,7 +338,7 @@ set_api_key <- function (key) {
 #' @export
 #' @return TRUE
 set_folder_id <- function (id) {
-  .perma_cc_folder_id <<- id
+  assign(.perma_cc_folder_id, key, env=archiv_env)
 }
 
 #' Extracts the urls from a webpage.
@@ -409,7 +411,6 @@ extract_urls_from_folder <- function (fp) {
 #' @export
 #' @return A list of vectors with the id and name.
 check_folder <- function(folder_list) {
-  print(folder_list)
   if (is.null(folder_list)) {
     folder_list
   } else if (folder_list['has_children'] == "FALSE") {
@@ -424,12 +425,13 @@ check_folder <- function(folder_list) {
 #' @export
 #' @return A list of vectors with the id and name.
 get_subfolders <- function (id) {
-  if (.perma_cc_key == "") {
+  perma_cc_key <- get(.perma_cc_key, envir=archiv_env)
+  if (perma_cc_key == "") {
     NULL
   } else if (is.null(id)) {
     NULL
   } else {
-    .perma_cc_folder_suff <- paste0("/folders?api_key=", .perma_cc_key)
+    .perma_cc_folder_suff <- paste0("/folders?api_key=", perma_cc_key)
     envelop <- paste0(.perma_cc_folder_pref, id, .perma_cc_folder_suff)
     data <- fromJSON(envelop)$objects
     reply <- NULL
@@ -445,11 +447,12 @@ get_subfolders <- function (id) {
 #' @export
 #' @return A list of vectors with the top folder and all its children.
 get_folder_ids <- function () {
+  perma_cc_key <- get(.perma_cc_key, envir=archiv_env)
   reply <- NULL
-  if (.perma_cc_key == "") {
+  if (perma_cc_key == "") {
     reply <- FALSE
   } else {
-    envelop = paste0(.perma_cc_user_url, .perma_cc_key)
+    envelop = paste0(.perma_cc_user_url, perma_cc_key)
     data <- fromJSON(envelop)$top_level_folders
     if (length(unlist(data))) {
       for (row in 1:nrow(data))
