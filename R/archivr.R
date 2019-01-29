@@ -62,6 +62,7 @@ archiv_env <- new.env()
 #' Global var for the API key for perma.cc
 .perma_cc_key <- "NO KEY"
 key <- "NO KEY"
+.perma_cc_folder_id <- 0
 assign(.perma_cc_key, key, envir=archiv_env)
 .perma_cc_folder_pref <- "https://api.perma.cc/v1/folders/"
 .wb_save_url <- "https://web.archive.org/save/"
