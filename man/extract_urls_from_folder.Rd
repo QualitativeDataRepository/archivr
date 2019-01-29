@@ -9,6 +9,9 @@ extract_urls_from_folder(fp)
 \arguments{
 \item{fp}{A filepath or string.}
 }
+\value{
+A list of urls.
+}
 \description{
 Get the urls from all text files in a folder
 }

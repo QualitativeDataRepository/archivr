@@ -9,6 +9,9 @@ extract_urls_from_text(fp)
 \arguments{
 \item{fp}{A filepath or string.}
 }
+\value{
+a List of Urls.
+}
 \description{
 Get the urls from a text file or string
 }

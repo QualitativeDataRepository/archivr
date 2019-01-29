@@ -38,6 +38,7 @@ library(tools)
 
 #' Get the folder id and name from all text files in a perma.cc folder
 #'
+#' @export
 #' @return The id and name of the first top folder (usually "Personal Links")
 #'    in perma.cc
 get_default_folder <- function (default=1) {
@@ -124,6 +125,7 @@ archiv_batch <- function (url_list, api=.perma_cc_key, folder=.folder_id) {
 #' Creates a json string from a list of urls.
 #'
 #' @param url_list A list of urls.
+#' @export
 #' @return A json string representing the list.
 list_string <- function (url_list) {
   quotes <- paste('"', url_list, '"', sep="")
@@ -271,6 +273,7 @@ archiv.fromText <- function (fp, method="wayback") {
 #' Check whether a url is available in the Wayback Machine
 #'
 #' @param url The url to check.
+#' @export
 #' @return a jsonlite object where
 #'   object$url is the original url.
 #'   object$$archived_snapshots$closest$status is the http status
@@ -291,6 +294,7 @@ from_wayback <- function (url) {
 #' Check whether a url is available in Perma.cc
 #'
 #' @param url The url to check.
+#' @export
 #' @return a vector containing
 #'   the original url.
 #'   the http status
@@ -334,6 +338,7 @@ set_folder_id <- function (id) {
 #' Extracts the urls from a webpage.
 #'
 #' @param url The url to extract urls.
+#' @export
 #' @return a vector of urls.
 extract_urls_from_webpage <- function (url) {
   pg <- read_html(url)
@@ -346,6 +351,8 @@ extract_urls_from_webpage <- function (url) {
 #' Get the urls from a text file or string
 #'
 #' @param fp A filepath or string.
+#' @export
+#' @return a List of Urls.
 extract_urls_from_text <- function (fp) {
   url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
   text <- tryCatch({
@@ -375,6 +382,8 @@ extract_urls_from_text <- function (fp) {
 #' Get the urls from all text files in a folder
 #'
 #' @param fp A filepath or string.
+#' @export
+#' @return A list of urls.
 extract_urls_from_folder <- function (fp) {
   url_pattern <- "(http[s]?:)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?"
   text <- readtext(fp)
@@ -394,6 +403,7 @@ extract_urls_from_folder <- function (fp) {
 
 #' Works with get_subfolders to flatten the folder ids tree
 #' @param folder_list a list of perma.cc folder objects
+#' @export
 #' @return A list of vectors with the id and name.
 check_folder <- function(folder_list) {
   print(folder_list)
@@ -411,6 +421,7 @@ check_folder <- function(folder_list) {
 
 #' Works with check_folder to flatten folder ids tree
 #' @param id A folder id
+#' @export
 #' @return A list of vectors with the id and name.
 get_subfolders <- function (id) {
   if (.perma_cc_key == "") {
