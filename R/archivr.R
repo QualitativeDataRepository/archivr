@@ -75,7 +75,10 @@ archiv_env <- new.env()
   }
   return (reply)
 }
-.perma_cc_status_url <- function (id, api=get(.perma_cc_key, envir=archiv_env)) {
+.perma_cc_status_url <- function (id, api="") {
+  if (api == "") {
+    api <- get(.perma_cc_key, envir=archiv_env)
+  }
   url <- "https://api.perma.cc/v1/archives/batches/"
   key <- paste0("?api_key=", api)
   return (paste0(url, id, key))
@@ -107,7 +110,10 @@ archiv <- function (url_list, method="wayback") {
 #' @param url_list A vector of urls to archive.
 #' @param api (Optional api key)
 #' @param folder (Mandatory, but defaults to .folder_id)
-archiv_batch <- function (url_list, api=get(.perma_cc_key, envir=archiv_env), folder=.folder_id) {
+archiv_batch <- function (url_list, api="", folder=.folder_id) {
+  if (api == "") {
+    api <- get(.perma_cc_key, envir=archiv_env)
+  }
   api_url <- paste0(.perma_cc_post_batch_api_url, api)
   setting <- new_handle()
   handle_setopt(setting, customrequest = "POST")
@@ -141,7 +147,10 @@ list_string <- function (url_list) {
 #' @param method Either "perma_cc" or the default, "wayback."
 #' @export
 #' @return A list or object representing the result.
-archiv_url <- function (arc_url, fold=.perma_cc_folder_id, api=get(.perma_cc_key, envir=archiv_env), method="perma_cc") {
+archiv_url <- function (arc_url, fold=.perma_cc_folder_id, api="", method="perma_cc") {
+  if (api == "") {
+    api <- get(.perma_cc_key, envir=archiv_env)
+  }
   if (method == "perma_cc") {
     folder_url <- paste0()
     api_url <- paste0(.perma_cc_post_api_url, api)
