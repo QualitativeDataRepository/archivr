@@ -75,7 +75,7 @@ archiv_env <- new.env()
   }
   return (reply)
 }
-.perma_cc_status_url <- function (id, api=get(.perma_cc_key, envir=archiv_env) {
+.perma_cc_status_url <- function (id, api=get(.perma_cc_key, envir=archiv_env)) {
   url <- "https://api.perma.cc/v1/archives/batches/"
   key <- paste0("?api_key=", api)
   return (paste0(url, id, key))
