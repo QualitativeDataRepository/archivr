@@ -60,6 +60,7 @@ archiv_env <- new.env()
 .wb_available_url <- "http://archive.org/wayback/available?url="
 .perma_cc_user_url <- "https://api.perma.cc/v1/user/?api_key="
 #' Global var for the API key for perma.cc
+.perma_cc_key <- ""
 assign(.perma_cc_key, "", envir=archiv_env)
 .perma_cc_folder_pref <- "https://api.perma.cc/v1/folders/"
 .wb_save_url <- "https://web.archive.org/save/"
