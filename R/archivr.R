@@ -69,15 +69,7 @@ assign(.perma_cc_key, key, envir=archiv_env)
 .perma_cc_api_url <- "https://api.perma.cc/v1/public/archives/?url="
 .perma_cc_post_api_url <- "https://api.perma.cc/v1/archives/?api_key="
 .perma_cc_post_batch_api_url <- "https://api.perma.cc/v1/archives/batches?api_key="
-.folder_id <- function() {
-  reply <- get_default_folder()
-  if (get_default_folder() == FALSE) {
-    print ("Please use set_api_key(YOUR_KEY) to set your api key")
-  } else {
-    print (paste("Setting default folder to ", reply))
-  }
-  return (reply)
-}
+.folder_id <- 0
 .perma_cc_status_url <- function (id, api="") {
   if (api == "") {
     api <- get(.perma_cc_key, envir=archiv_env)
@@ -86,7 +78,7 @@ assign(.perma_cc_key, key, envir=archiv_env)
   key <- paste0("?api_key=", api)
   return (paste0(url, id, key))
 }
-assign(.perma_cc_folder_id, .folder_id(), envir=archiv_env)
+assign(.perma_cc_folder_id, .folder_id, envir=archiv_env)
 
 #' Archive a list of urls in perma_cc.
 #'
