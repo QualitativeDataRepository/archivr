@@ -287,6 +287,8 @@ from_wayback <- function (url) {
   result <- list(url, "000", FALSE, "url not found", "unknown")
   if (length(reply$archived_snapshots)) {
     result = reply
+  } else {
+    result = "Received a NULL value from archived snapshots from Wayback."
   }
   return (result)
 }
@@ -312,6 +314,8 @@ from_perma_cc <- function (url) {
     playback_url <- ifelse(is.na(step["captures.playback_url"]), step["captures.playback_url1"], step["captures.playback_url"])
     timestamp <- ifelse(is.na(step["creation_timestamp"]), "unknown", step["creation_timestamp"])
     result <- c(unname(step["url"]), unname(status), unname(available), unname(playback_url), unname(timestamp))
+  } else {
+    result <- "An error occurred when retrieving perma_cc objects."
   }
   return(result)
 }
@@ -346,7 +350,6 @@ extract_urls_from_webpage <- function (url) {
   Filter(function(x)
     startsWith(x, "http"), lst)
 }
-
 
 #' Get the urls from a text file or string
 #'
@@ -408,13 +411,10 @@ extract_urls_from_folder <- function (fp) {
 check_folder <- function(folder_list) {
   print(folder_list)
   if (is.null(folder_list)) {
-    print("is null")
     folder_list
   } else if (folder_list['has_children'] == "FALSE") {
-    print("is false")
     subset(folder_list, select=c("id", "name"))
   } else {
-    print("children")
     rbind(unname(c(folder_list['id'], folder_list['name'])), get_subfolders(folder_list['id']))
   }
 }
@@ -451,8 +451,12 @@ get_folder_ids <- function () {
   } else {
     envelop = paste0(.perma_cc_user_url, .perma_cc_key)
     data <- fromJSON(envelop)$top_level_folders
-    for (row in 1:nrow(data))
-      reply <- rbind(reply, check_folder(data[row,]))
+    if (length(unlist(data))) {
+      for (row in 1:nrow(data))
+        reply <- rbind(reply, check_folder(data[row,]))
+    } else {
+      print ("Error in extracting root folders in Perma.cc.")
     }
+  }
   return (reply)
 }
