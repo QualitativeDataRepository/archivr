@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{archiv.fromText}
 \alias{archiv.fromText}
-\title{Collect information on whether links in a file are archived.}
+\title{Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.}
 \usage{
 archiv.fromText(fp, method = "wayback")
 }
@@ -16,5 +16,5 @@ a dataframe containing the url, status, availability,
   archived url(s) and timestamp(s)
 }
 \description{
-Collect information on whether links in a file are archived.
+Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.
 }

@@ -4,7 +4,7 @@
 \alias{archiv_batch}
 \title{Save a batch of urls to a folder - THIS CURRENTLY DOES NOT WORK.}
 \usage{
-archiv_batch(url_list, api = .perma_cc_key, folder = .folder_id)
+archiv_batch(url_list, api = "", folder = "")
 }
 \arguments{
 \item{url_list}{A vector of urls to archive.}

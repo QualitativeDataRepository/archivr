@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{archiv.fromUrl}
 \alias{archiv.fromUrl}
-\title{Collect information on whether links in a url are archived.}
+\title{Save the links in a url in perma.cc or Wayback.}
 \usage{
 archiv.fromUrl(url, method = "wayback")
 }
@@ -16,5 +16,5 @@ a dataframe containing the url, status, availability,
   archived url(s) and timestamp(s)
 }
 \description{
-Collect information on whether links in a url are archived.
+Save the links in a url in perma.cc or Wayback.
 }

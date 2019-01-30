@@ -4,8 +4,7 @@
 \alias{archiv_url}
 \title{Saves a single url in either perma.cc or the wayback machine.}
 \usage{
-archiv_url(arc_url, fold = .perma_cc_folder_id, api = .perma_cc_key,
-  method = "perma_cc")
+archiv_url(arc_url, fold = "", api = "", method = "perma_cc")
 }
 \arguments{
 \item{arc_url}{The url to archive.}
