@@ -36,13 +36,18 @@ library(stringr)
 library(curl)
 library(tools)
 
+
+archiv_env <- new.env()
+archiv_env$perma_cc_key <- ""
+archiv_env$perma_cc_folder_id <- 0
+
 #' Get the folder id and name from all text files in a perma.cc folder
 #'
 #' @export
 #' @return The id and name of the first top folder (usually "Personal Links")
 #'    in perma.cc
 get_default_folder <- function (default=1) {
-  perma_cc_key <- get(.perma_cc_key, envir=archiv_env)
+  perma_cc_key <- get('perma_cc_key', envir=archiv_env)
   if (perma_cc_key == "") {
     reply <- FALSE
   } else {
@@ -55,30 +60,24 @@ get_default_folder <- function (default=1) {
   return(reply)
 }
 
-archiv_env <- new.env()
 #' Default url for the Wayback Machine
 .wb_available_url <- "http://archive.org/wayback/available?url="
 .perma_cc_user_url <- "https://api.perma.cc/v1/user/?api_key="
 #' Global var for the API key for perma.cc
-.perma_cc_key <- "NO KEY"
-key <- "NO KEY"
-.perma_cc_folder_id <- 0
-assign(.perma_cc_key, key, envir=archiv_env)
 .perma_cc_folder_pref <- "https://api.perma.cc/v1/folders/"
 .wb_save_url <- "https://web.archive.org/save/"
 .perma_cc_api_url <- "https://api.perma.cc/v1/public/archives/?url="
 .perma_cc_post_api_url <- "https://api.perma.cc/v1/archives/?api_key="
 .perma_cc_post_batch_api_url <- "https://api.perma.cc/v1/archives/batches?api_key="
-.folder_id <- 0
+
 .perma_cc_status_url <- function (id, api="") {
-  if (api == "") {
-    api <- get(.perma_cc_key, envir=archiv_env)
+  if (is.null(api)) {
+    api <- get_api_key()
   }
   url <- "https://api.perma.cc/v1/archives/batches/"
   key <- paste0("?api_key=", api)
   return (paste0(url, id, key))
 }
-assign(.perma_cc_folder_id, .folder_id, envir=archiv_env)
 
 #' Archive a list of urls in perma_cc.
 #'
@@ -105,10 +104,7 @@ archiv <- function (url_list, method="wayback") {
 #' @param url_list A vector of urls to archive.
 #' @param api (Optional api key)
 #' @param folder (Mandatory, but defaults to .folder_id)
-archiv_batch <- function (url_list, api="", folder=.folder_id) {
-  if (api == "") {
-    api <- get(.perma_cc_key, envir=archiv_env)
-  }
+archiv_batch <- function (url_list, api="", folder="") {
   api_url <- paste0(.perma_cc_post_batch_api_url, api)
   setting <- new_handle()
   handle_setopt(setting, customrequest = "POST")
@@ -142,9 +138,12 @@ list_string <- function (url_list) {
 #' @param method Either "perma_cc" or the default, "wayback."
 #' @export
 #' @return A list or object representing the result.
-archiv_url <- function (arc_url, fold=.perma_cc_folder_id, api="", method="perma_cc") {
-  if (api == "") {
-    api <- get(.perma_cc_key, envir=archiv_env)
+archiv_url <- function (arc_url, fold="", api="", method="perma_cc") {
+  if (is.null(api)) {
+    api <- get_api_key()
+  }
+  if (is.null(fold)) {
+    fold <- get_folder_id()
   }
   if (method == "perma_cc") {
     folder_url <- paste0()
@@ -331,7 +330,9 @@ from_perma_cc <- function (url) {
 #' @param key The Api Key.
 #' @export
 set_api_key <- function (key) {
-  assign(.perma_cc_key, key, env=archiv_env)
+  old <- archiv_env$perma_cc_key
+  assign('perma_cc_key', key, env=archiv_env)
+  invisible(old)
 }
 
 #' Set the folder to save items in Perma.cc.
@@ -342,7 +343,9 @@ set_api_key <- function (key) {
 #' @export
 #' @return TRUE
 set_folder_id <- function (id) {
-  assign(.perma_cc_folder_id, key, env=archiv_env)
+  old <- archiv_env$perma_cc_folder_id
+  assign('perma_cc_folder_id', id, env=archiv_env)
+  invisible(old)
 }
 
 #' Extracts the urls from a webpage.
@@ -429,7 +432,7 @@ check_folder <- function(folder_list) {
 #' @export
 #' @return A list of vectors with the id and name.
 get_subfolders <- function (id) {
-  perma_cc_key <- get(.perma_cc_key, envir=archiv_env)
+  perma_cc_key <- get('perma_cc_key', envir=archiv_env)
   if (perma_cc_key == "") {
     NULL
   } else if (is.null(id)) {
@@ -447,13 +450,27 @@ get_subfolders <- function (id) {
   }
 }
 
+#' Get the api key if set.
+#' @export
+#' @return The current api key state.
+get_api_key <- function() {
+  archiv_env$perma_cc_key
+}
+
+#' Get the root folder id for the current api key.
+#' @export
+#' @return The current folder id state.
+get_folder_id <- function () {
+  archiv_env$perma_cc_folder_id
+}
+
 #' Get the folder ids starting from the default folder.
 #' @export
 #' @return A list of vectors with the top folder and all its children.
 get_folder_ids <- function () {
-  perma_cc_key <- get(.perma_cc_key, envir=archiv_env)
+  perma_cc_key <- get('perma_cc_key', envir=archiv_env)
   reply <- NULL
-  if (perma_cc_key == "") {
+  if (is.null(perma_cc_key)) {
     reply <- FALSE
   } else {
     envelop = paste0(.perma_cc_user_url, perma_cc_key)
