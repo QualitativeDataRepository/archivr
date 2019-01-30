@@ -338,7 +338,7 @@ from_perma_cc <- function (url) {
 #' @export
 set_api_key <- function (key) {
   old <- archiv_env$perma_cc_key
-  assign('perma_cc_key', key, env=archiv_env)
+  assign('perma_cc_key', key, envir=archiv_env)
   invisible(old)
 }
 
@@ -351,7 +351,7 @@ set_api_key <- function (key) {
 #' @return TRUE
 set_folder_id <- function (id) {
   old <- archiv_env$perma_cc_folder_id
-  assign('perma_cc_folder_id', id, env=archiv_env)
+  assign('perma_cc_folder_id', id, envir=archiv_env)
   invisible(old)
 }
 
