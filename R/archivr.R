@@ -43,6 +43,7 @@ archiv_env$perma_cc_folder_id <- 0
 
 #' Get the folder id and name from all text files in a perma.cc folder
 #'
+#' @importFrom jsonlite fromJSON
 #' @export
 #' @return The id and name of the first top folder (usually "Personal Links")
 #'    in perma.cc
@@ -101,6 +102,7 @@ archiv <- function (url_list, method="wayback") {
 }
 
 #' Save a batch of urls to a folder - THIS CURRENTLY DOES NOT WORK.
+#' @import curl
 #' @param url_list A vector of urls to archive.
 #' @param api (Optional api key)
 #' @param folder (Mandatory, but defaults to .folder_id)
@@ -136,6 +138,8 @@ list_string <- function (url_list) {
 #'
 #' @param arc_url The url to archive.
 #' @param method Either "perma_cc" or the default, "wayback."
+#' @importFrom jsonlite fromJSON
+#' @import curl
 #' @export
 #' @return A list or object representing the result.
 archiv_url <- function (arc_url, fold="", api="", method="perma_cc") {
@@ -174,6 +178,7 @@ archiv_url <- function (arc_url, fold="", api="", method="perma_cc") {
 
 #' Save a url on the wayback machine.
 #' @param arc_url - the url to archive.
+#' @import curl
 #' @export
 #' @return A list or object representing the result.
 archiv_wayback <- function (arc_url) {
@@ -278,6 +283,7 @@ archiv.fromText <- function (fp, method="wayback") {
 #' Check whether a url is available in the Wayback Machine
 #'
 #' @param url The url to check.
+#' @importFrom jsonlite fromJSON
 #' @export
 #' @return a jsonlite object where
 #'   object$url is the original url.
@@ -301,6 +307,7 @@ from_wayback <- function (url) {
 #' Check whether a url is available in Perma.cc
 #'
 #' @param url The url to check.
+#' @importFrom jsonlite fromJSON
 #' @export
 #' @return a vector containing
 #'   the original url.
@@ -363,6 +370,8 @@ extract_urls_from_webpage <- function (url) {
 #' Get the urls from a text file or string
 #'
 #' @param fp A filepath or string.
+#' @import readtext
+#' @import stringr
 #' @export
 #' @return a List of Urls.
 extract_urls_from_text <- function (fp) {
@@ -394,6 +403,8 @@ extract_urls_from_text <- function (fp) {
 #' Get the urls from all text files in a folder
 #'
 #' @param fp A filepath or string.
+#' @import readtext
+#' @import stringr
 #' @export
 #' @return A list of urls.
 extract_urls_from_folder <- function (fp) {
@@ -429,6 +440,7 @@ check_folder <- function(folder_list) {
 
 #' Works with check_folder to flatten folder ids tree
 #' @param id A folder id
+#' @importFrom jsonlite fromJSON
 #' @export
 #' @return A list of vectors with the id and name.
 get_subfolders <- function (id) {
@@ -465,6 +477,7 @@ get_folder_id <- function () {
 }
 
 #' Get the folder ids starting from the default folder.
+#' @importFrom jsonlite fromJSON
 #' @export
 #' @return A list of vectors with the top folder and all its children.
 get_folder_ids <- function () {
