@@ -204,7 +204,6 @@ archiv_wayback <- function (arc_url) {
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
 view_archiv <- function (lst, method="wayback") {
-  if (typeof(lst) == "")
   if (method == "perma_cc") {
     newlst <- lapply(lst, from_perma_cc)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
