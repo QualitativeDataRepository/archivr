@@ -204,7 +204,6 @@ archiv_wayback <- function (arc_url) {
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
 view_archiv <- function (lst, method="wayback") {
-  if (typeof(lst) == "")
   if (method == "perma_cc") {
     newlst <- lapply(lst, from_perma_cc)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
@@ -301,7 +300,7 @@ from_wayback <- function (url) {
   if (length(reply$archived_snapshots)) {
     result = reply
   } else {
-    result = "Received a NULL value from archived snapshots from Wayback."
+    print("Received a NULL value from archived snapshots from Wayback.")
   }
   return (result)
 }
@@ -329,7 +328,7 @@ from_perma_cc <- function (url) {
     timestamp <- ifelse(is.na(step["creation_timestamp"]), "unknown", step["creation_timestamp"])
     result <- c(unname(step["url"]), unname(status), unname(available), unname(playback_url), unname(timestamp))
   } else {
-    result <- "An error occurred when retrieving perma_cc objects."
+    print ("An error occurred when retrieving perma_cc objects.")
   }
   return(result)
 }
