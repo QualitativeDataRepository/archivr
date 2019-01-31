@@ -374,7 +374,7 @@ extract_urls_from_webpage <- function (url) {
 #' @param fp A filepath or string.
 #' @import readtext
 #' @import stringr
-#' @importFrom tools file_ext
+#' @import tools
 #' @export
 #' @return a List of Urls.
 extract_urls_from_text <- function (fp) {
