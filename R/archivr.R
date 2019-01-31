@@ -204,6 +204,7 @@ archiv_wayback <- function (arc_url) {
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
 view_archiv <- function (lst, method="wayback") {
+  if (typeof(lst) == "")
   if (method == "perma_cc") {
     newlst <- lapply(lst, from_perma_cc)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
@@ -359,7 +360,7 @@ set_folder_id <- function (id) {
 #' Extracts the urls from a webpage.
 #'
 #' @param url The url to extract urls.
-#' @import rvest
+#' @import rvest xml2
 #' @export
 #' @return a vector of urls.
 extract_urls_from_webpage <- function (url) {
