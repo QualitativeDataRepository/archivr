@@ -20,7 +20,8 @@ Imports:
     stringr,
     curl,
     jsonlite,
-    tools
+    tools,
+    textreadr
 License: MIT
 LazyData: true
 RoxygenNote: 6.1.0.9000
