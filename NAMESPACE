@@ -27,5 +27,8 @@ import(readtext)
 import(rvest)
 import(stringr)
 import(tools)
+<<<<<<< HEAD
 import(xml2)
+=======
+>>>>>>> 83f2bdc... Assign folder_ids to environment
 importFrom(jsonlite,fromJSON)
