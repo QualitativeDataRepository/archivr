@@ -72,10 +72,8 @@ get_default_folder <- function (default=1) {
 .perma_cc_post_api_url <- "https://api.perma.cc/v1/archives/?api_key="
 .perma_cc_post_batch_api_url <- "https://api.perma.cc/v1/archives/batches?api_key="
 
-.perma_cc_status_url <- function (id, api="") {
-  if (is.null(api)) {
-    api <- get_api_key()
-  }
+.perma_cc_status_url <- function (id) {
+  api <- get_api_key()
   url <- "https://api.perma.cc/v1/archives/batches/"
   key <- paste0("?api_key=", api)
   return (paste0(url, id, key))
@@ -143,13 +141,9 @@ list_string <- function (url_list) {
 #' @import curl
 #' @export
 #' @return A list or object representing the result.
-archiv_url <- function (arc_url, fold="", api="", method="perma_cc") {
-  if (is.null(api)) {
-    api <- get_api_key()
-  }
-  if (is.null(fold)) {
-    fold <- get_folder_id()
-  }
+archiv_url <- function (arc_url, method="perma_cc") {
+  api <- get_api_key()
+  fold <- toString(get_folder_id())
   if (method == "perma_cc") {
     folder_url <- paste0()
     api_url <- paste0(.perma_cc_post_api_url, api)
@@ -160,9 +154,9 @@ archiv_url <- function (arc_url, fold="", api="", method="perma_cc") {
     r <- curl_fetch_memory(api_url, setting)
     reply <- fromJSON(rawToChar(r$content))
     if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
-      result <- "Please input your api key:\nUse 'set_api_key(API_KEY)'"
+      print("Please input your api key:\nUse 'set_api_key(API_KEY)'")
     } else if ((!(is.null(reply$error)))) {
-      result <- "Received an error reply, likely because your limit has been exceeded."
+      print("Received an error reply, likely because your limit has been exceeded.")
     } else {
       if (!(reply$url == "Not a valid URL.")) {
         result <- c(reply$url, reply$guid, reply$archive_timestamp,
@@ -469,14 +463,14 @@ get_subfolders <- function (id) {
 #' @export
 #' @return The current api key state.
 get_api_key <- function() {
-  archiv_env$perma_cc_key
+  get('perma_cc_key', envir=archiv_env)
 }
 
 #' Get the root folder id for the current api key.
 #' @export
 #' @return The current folder id state.
 get_folder_id <- function () {
-  archiv_env$perma_cc_folder_id
+  get('perma_cc_folder_id', envir=archiv_env)
 }
 
 #' Get the folder ids starting from the default folder.
