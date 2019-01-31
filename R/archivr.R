@@ -40,7 +40,7 @@ library(textreadr)
 
 archiv_env <- new.env()
 archiv_env$perma_cc_key <- ""
-archiv_env$perma_cc_folder_id <- 0
+archiv_env$perma_cc_folder_id <- NULL
 
 #' Get the folder id and name from all text files in a perma.cc folder
 #'
@@ -145,6 +145,15 @@ archiv_url <- function (arc_url, method="perma_cc") {
   api <- get_api_key()
   fold <- toString(get_folder_id())
   if (method == "perma_cc") {
+    if (is.null(fold)) {
+      print("Setting folder based on api key.")
+      set_folder_id(get_folder_ids()[1,]$id)
+      fold <- toString(get_folder_id())
+      if (!isTRUE(fold)) {
+        print ("Unable to get the correct folder. Please check that your")
+        print ("API key is set correctly.")
+      }
+    }
     folder_url <- paste0()
     api_url <- paste0(.perma_cc_post_api_url, api)
     setting <- new_handle()
@@ -158,7 +167,7 @@ archiv_url <- function (arc_url, method="perma_cc") {
     } else if ((!(is.null(reply$error)))) {
       print("Received an error reply, likely because your limit has been exceeded.")
     } else {
-      if (!(reply$url == "Not a valid URL.")) {
+      if (!(is.null(reply$url == "Not a valid URL."))) {
         result <- c(reply$url, reply$guid, reply$archive_timestamp,
           reply$captures[1,]$playback_url, reply$captures[2,]$playback_url,
         paste0("https://perma.cc/", reply$guid))
@@ -168,7 +177,6 @@ archiv_url <- function (arc_url, method="perma_cc") {
   } else if (method == "wayback") {
     return (archiv_wayback(arc_url))
   }
-
 }
 
 #' Save a url on the wayback machine.
