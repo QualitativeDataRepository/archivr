@@ -359,7 +359,7 @@ set_folder_id <- function (id) {
 #' Extracts the urls from a webpage.
 #'
 #' @param url The url to extract urls.
-#' @import xml2
+#' @import rvest
 #' @export
 #' @return a vector of urls.
 extract_urls_from_webpage <- function (url) {
