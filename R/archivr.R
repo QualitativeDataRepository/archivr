@@ -88,7 +88,17 @@ get_default_folder <- function (default=1) {
 #'   archived website, the screenshot and a timestamp.
 archiv <- function (url_list, method="wayback") {
   if (method == "perma_cc") {
+    fold <- get_folder_id()
+    if (is.null(fold)) {
+      print("Setting folder based on api key.")
+      set_folder_id(get_folder_ids()[1,]$id)
+      fold <- toString(get_folder_id())
+      if (is.null(fold)) {
+        print ("Unable to get the correct folder. Please check that your")
+        print ("API key is set correctly.")
+      }}
     newlst <- lapply(url_list, archiv_url)
+    print(newlst)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
     colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot", "perma_cc_short_url")
     return(df)
@@ -145,15 +155,6 @@ archiv_url <- function (arc_url, method="perma_cc") {
   api <- get_api_key()
   fold <- toString(get_folder_id())
   if (method == "perma_cc") {
-    if (is.null(fold)) {
-      print("Setting folder based on api key.")
-      set_folder_id(get_folder_ids()[1,]$id)
-      fold <- toString(get_folder_id())
-      if (!isTRUE(fold)) {
-        print ("Unable to get the correct folder. Please check that your")
-        print ("API key is set correctly.")
-      }
-    }
     folder_url <- paste0()
     api_url <- paste0(.perma_cc_post_api_url, api)
     setting <- new_handle()
@@ -165,6 +166,7 @@ archiv_url <- function (arc_url, method="perma_cc") {
     if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
       print("Please input your api key:\nUse 'set_api_key(API_KEY)'")
     } else if ((!(is.null(reply$error)))) {
+      print(reply)
       print("Received an error reply, likely because your limit has been exceeded.")
     } else {
       if (!(is.null(reply$url == "Not a valid URL."))) {
@@ -486,9 +488,10 @@ get_folder_id <- function () {
 #' @export
 #' @return A list of vectors with the top folder and all its children.
 get_folder_ids <- function () {
-  perma_cc_key <- get('perma_cc_key', envir=archiv_env)
+  perma_cc_key <- get_api_key()
   reply <- NULL
   if (is.null(perma_cc_key)) {
+    print("Please input your api key:\nUse 'set_api_key(API_KEY)'")
     reply <- FALSE
   } else {
     envelop = paste0(.perma_cc_user_url, perma_cc_key)
