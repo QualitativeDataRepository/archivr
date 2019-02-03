@@ -1,13 +1,3 @@
-#' Archivr: Save Your Websites in Perma.cc or the Wayback Machine
-#'
-#' Archivr is a toolkit for the long-run archiving of Qualitative data.
-#' It takes a list of urls and uses either the perma.cc or Wayback Machine
-#' archives to store the webpages for future reference. It will also parse
-#' word or html documents for urls to be archived.
-#' @docType package
-#' @name archivr
-
-
 #' Copyright <2019> <Qualitative Data Repository, Syracuse University>
 
 #' Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,6 +17,18 @@
 #' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #' THE SOFTWARE.
+
+
+#' Archivr: Save Your Websites in Perma.cc or the Wayback Machine
+#'
+#' Archivr is a toolkit for the long-run archiving of Qualitative data.
+#' It takes a list of urls and uses either the perma.cc or Wayback Machine
+#' archives to store the webpages for future reference. It will also parse
+#' word or html documents for urls to be archived.
+#' @docType package
+#' @name archivr
+
+
 
 library(readtext)
 library(jsonlite)
