@@ -46,6 +46,7 @@ archiv_env$perma_cc_folder_id <- NULL
 
 #' Get the folder id of the perma.cc default folder (usually "Personal Links")
 #'
+#' @param default The number of the folder to accept by default.
 #' @importFrom jsonlite fromJSON
 #' @export
 #' @return The id and name of the first top folder (usually "Personal Links")
