@@ -44,6 +44,7 @@ archiv_env$perma_cc_folder_id <- NULL
 
 #' Get the folder id and name from all text files in a perma.cc folder
 #'
+#' @param default The value of the folder to collect by default.
 #' @importFrom jsonlite fromJSON
 #' @export
 #' @return The id and name of the first top folder (usually "Personal Links")

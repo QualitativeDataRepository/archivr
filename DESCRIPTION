@@ -22,7 +22,7 @@ Imports:
     jsonlite,
     tools,
     textreadr
-License: MIT
+License: MIT + file LICENSE
 LazyData: true
 RoxygenNote: 6.1.0.9000
 Encoding: UTF-8
