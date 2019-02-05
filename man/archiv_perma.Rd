@@ -4,7 +4,7 @@
 \alias{archiv_perma}
 \title{Saves a single url in perma.cc.}
 \usage{
-archiv_perma(arc_url, method = "perma_cc")
+archiv_perma(arc_url)
 }
 \arguments{
 \item{arc_url}{The url to archive.}

@@ -6,6 +6,9 @@
 \usage{
 get_default_folder(default = 1)
 }
+\arguments{
+\item{default}{The number of the folder to accept by default.}
+}
 \value{
 The id and name of the first top folder (usually "Personal Links")
    in perma.cc
