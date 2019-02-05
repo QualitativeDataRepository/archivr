@@ -131,7 +131,7 @@ list_string <- function (url_list) {
 #' @import curl
 #' @export
 #' @return A list or object representing the result.
-archiv_perma <- function (arc_url, method="perma_cc") {
+archiv_perma <- function (arc_url) {
   api <- get_api_key()
   fold <- toString(get_folder_id())
   if (is.null(api) || api == "") {
@@ -471,7 +471,6 @@ get_folder_ids <- function () {
   reply <- NULL
   if (is.null(perma_cc_key) || perma_cc_key == "") {
     stop("Please input your perma.cc api key: Use 'set_api_key(API_KEY)'")
-    reply <- FALSE
   } else {
     envelop = paste0(.perma_cc_user_url, perma_cc_key)
     data <- fromJSON(envelop)$top_level_folders
