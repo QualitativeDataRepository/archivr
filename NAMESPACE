@@ -3,7 +3,7 @@
 export(archiv)
 export(archiv.fromText)
 export(archiv.fromUrl)
-export(archiv_url)
+export(archiv_perma)
 export(archiv_wayback)
 export(check_folder)
 export(extract_urls_from_folder)

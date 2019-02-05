@@ -1,22 +1,22 @@
-#' Copyright <2019> <Qualitative Data Repository, Syracuse University>
+# Copyright <2019> <Qualitative Data Repository, Syracuse University>
 
-#' Permission is hereby granted, free of charge, to any person obtaining a copy
-#' of this software and associated documentation files (the "Software"), to deal
-#' in the Software without restriction, including without limitation the rights
-#' to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#' copies of the Software, and to permit persons to whom the Software is
-#' furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#' The above copyright notice and this permission notice shall be included in
-#' all copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 
-#' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#' AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#' THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 
 
 #' Archivr: Save Your Websites in Perma.cc or the Wayback Machine
@@ -27,6 +27,8 @@
 #' word or html documents for urls to be archived.
 #' @docType package
 #' @name archivr
+
+
 
 library(readtext)
 library(jsonlite)
@@ -42,7 +44,7 @@ archiv_env <- new.env()
 archiv_env$perma_cc_key <- ""
 archiv_env$perma_cc_folder_id <- NULL
 
-#' Get the folder id and name from all text files in a perma.cc folder
+#' Get the folder id of the perma.cc default folder (usually "Personal Links")
 #'
 #' @importFrom jsonlite fromJSON
 #' @export
@@ -51,6 +53,7 @@ archiv_env$perma_cc_folder_id <- NULL
 get_default_folder <- function (default=1) {
   perma_cc_key <- get('perma_cc_key', envir=archiv_env)
   if (perma_cc_key == "") {
+    stop("Please input your perma.cc api key: Use 'set_api_key(API_KEY)'")
     reply <- FALSE
   } else {
     envelop = paste0(.perma_cc_user_url, perma_cc_key)
@@ -79,25 +82,24 @@ get_default_folder <- function (default=1) {
   return (paste0(url, id, key))
 }
 
-#' Archive a list of urls in perma_cc.
+#' Archive a list of urls in Wayback or perma_cc.
 #'
 #' @param url_list A list of urls to archive.
 #' @param method Either "wayback" or "perma_cc." Defaults to "wayback."
 #' @export
 #' @return A dataframe containing the original urls, the urls to the
-#'   archived website, the screenshot and a timestamp.
+#'   archived website. For Perma.cc also the URL to the screenshot, the short URL and a timestamp.
 archiv <- function (url_list, method="wayback") {
   if (method == "perma_cc") {
     fold <- get_folder_id()
-    if (is.null(fold)) {
+    if (is.null(fold) || fold == "") {
       print("Setting folder based on api key.")
-      set_folder_id(get_folder_ids()[1,]$id)
+      set_folder_id(get_default_folder()[1,]$id)
       fold <- toString(get_folder_id())
-      if (is.null(fold)) {
-        print ("Unable to get the correct folder. Please check that your")
-        print ("API key is set correctly.")
+      if (is.null(fold) || fold == "") {
+        stop("Unable to set perma.cc folder. Make sure you API key is set using 'set_api_key(API_KEY)'")
       }}
-    newlst <- lapply(url_list, archiv_url)
+    newlst <- lapply(url_list, archiv_perma)
     print(newlst)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
     colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot", "perma_cc_short_url")
@@ -110,27 +112,6 @@ archiv <- function (url_list, method="wayback") {
   }
 }
 
-#' Save a batch of urls to a folder - THIS CURRENTLY DOES NOT WORK.
-#' @import curl
-#' @param url_list A vector of urls to archive.
-#' @param api (Optional api key)
-#' @param folder (Mandatory, but defaults to .folder_id)
-archiv_batch <- function (url_list, api="", folder="") {
-  api_url <- paste0(.perma_cc_post_batch_api_url, api)
-  setting <- new_handle()
-  handle_setopt(setting, customrequest = "POST")
-  handle_setform(setting, urls=list_string(url_list), target_folder=folder)
-  r <- curl_fetch_memory(api_url, setting)
-  reply <- fromJSON(rawToChar(r$content))
-  if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
-    result <- "Please input your api key:\nUse 'set_api_key(API_KEY)'"
-  } else if ((!(is.null(reply$error)))) {
-    result <- "Received an error reply, likely because your limit has been exceeded."
-  } else {
-    result <- reply$id
-    return(result)
-  }
-}
 
 #' Creates a json string from a list of urls.
 #'
@@ -143,41 +124,39 @@ list_string <- function (url_list) {
   return (paste0("'[", string, "]'"))
 }
 
-#' Saves a single url in either perma.cc or the wayback machine.
+#' Saves a single url in perma.cc.
 #'
 #' @param arc_url The url to archive.
-#' @param method Either "perma_cc" or the default, "wayback."
 #' @importFrom jsonlite fromJSON
 #' @import curl
 #' @export
 #' @return A list or object representing the result.
-archiv_url <- function (arc_url, method="perma_cc") {
+archiv_perma <- function (arc_url) {
   api <- get_api_key()
   fold <- toString(get_folder_id())
-  if (method == "perma_cc") {
-    folder_url <- paste0()
-    api_url <- paste0(.perma_cc_post_api_url, api)
-    setting <- new_handle()
-    handle_setopt(setting, customrequest = "POST")
-    handle_setform(setting, url = arc_url, folder = fold)
-    result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
-    r <- curl_fetch_memory(api_url, setting)
-    reply <- fromJSON(rawToChar(r$content))
-    if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
-      print("Please input your api key:\nUse 'set_api_key(API_KEY)'")
-    } else if ((!(is.null(reply$error)))) {
-      print(reply)
-      print("Received an error reply, likely because your limit has been exceeded.")
-    } else {
-      if (!(is.null(reply$url == "Not a valid URL."))) {
-        result <- c(reply$url, reply$guid, reply$archive_timestamp,
-          reply$captures[1,]$playback_url, reply$captures[2,]$playback_url,
-        paste0("https://perma.cc/", reply$guid))
-      }
-      return(result)
+  if (is.null(api) || api == "") {
+    stop("API key not set for perma.cc. Use 'set_api_key() to set your key before using method='perma_cc'")
+  }
+  folder_url <- paste0()
+  api_url <- paste0(.perma_cc_post_api_url, api)
+  setting <- new_handle()
+  handle_setopt(setting, customrequest = "POST")
+  handle_setform(setting, url = arc_url, folder = fold)
+  result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
+  r <- curl_fetch_memory(api_url, setting)
+  reply <- fromJSON(rawToChar(r$content))
+  if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
+    stop("Please input your api key:\nUse 'set_api_key(API_KEY)'")
+  } else if ((!(is.null(reply$error)))) {
+    print(reply)
+    stop("Received an error reply, likely because your limit has been exceeded.")
+  } else {
+    if (!(is.null(reply$url == "Not a valid URL."))) {
+      result <- c(reply$url, reply$guid, reply$archive_timestamp,
+                  reply$captures[1,]$playback_url, reply$captures[2,]$playback_url,
+                  paste0("https://perma.cc/", reply$guid))
     }
-  } else if (method == "wayback") {
-    return (archiv_wayback(arc_url))
+    return(result)
   }
 }
 
@@ -490,9 +469,8 @@ get_folder_id <- function () {
 get_folder_ids <- function () {
   perma_cc_key <- get_api_key()
   reply <- NULL
-  if (is.null(perma_cc_key)) {
-    print("Please input your api key:\nUse 'set_api_key(API_KEY)'")
-    reply <- FALSE
+  if (is.null(perma_cc_key) || perma_cc_key == "") {
+    stop("Please input your perma.cc api key: Use 'set_api_key(API_KEY)'")
   } else {
     envelop = paste0(.perma_cc_user_url, perma_cc_key)
     data <- fromJSON(envelop)$top_level_folders
@@ -500,7 +478,7 @@ get_folder_ids <- function () {
       for (row in 1:nrow(data))
         reply <- rbind(reply, check_folder(data[row,]))
     } else {
-      print ("Error in extracting root folders in Perma.cc.")
+      print ("Error in extracting root folders in perma.cc.")
     }
   }
   return (reply)

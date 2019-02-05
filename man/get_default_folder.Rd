@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{get_default_folder}
 \alias{get_default_folder}
-\title{Get the folder id and name from all text files in a perma.cc folder}
+\title{Get the folder id of the perma.cc default folder (usually "Personal Links")}
 \usage{
 get_default_folder(default = 1)
 }
@@ -11,5 +11,5 @@ The id and name of the first top folder (usually "Personal Links")
    in perma.cc
 }
 \description{
-Get the folder id and name from all text files in a perma.cc folder
+Get the folder id of the perma.cc default folder (usually "Personal Links")
 }

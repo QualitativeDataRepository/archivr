@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{archiv}
 \alias{archiv}
-\title{Archive a list of urls in perma_cc.}
+\title{Archive a list of urls in Wayback or perma_cc.}
 \usage{
 archiv(url_list, method = "wayback")
 }
@@ -13,8 +13,8 @@ archiv(url_list, method = "wayback")
 }
 \value{
 A dataframe containing the original urls, the urls to the
-  archived website, the screenshot and a timestamp.
+  archived website. For Perma.cc also the URL to the screenshot, the short URL and a timestamp.
 }
 \description{
-Archive a list of urls in perma_cc.
+Archive a list of urls in Wayback or perma_cc.
 }
