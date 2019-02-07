@@ -1,3 +1,7 @@
+[![Travis build status](https://travis-ci.org/QualitativeDataRepository/archivr.svg?branch=master)](https://travis-ci.org/QualitativeDataRepository/archivr)
+
+ [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/QualitativeDataRepository/archivr?branch=master&svg=true)](https://ci.appveyor.com/project/QualitativeDataRepository/archivr)
+
 # Archivr
 
 Archivr is a project by the [Qualitative Data Repository](https://qdr.syr.edu/)
