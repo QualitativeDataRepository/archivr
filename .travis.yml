@@ -3,6 +3,7 @@
 language: R
 sudo: false
 cache: packages
+dist: xenial
 
 addons:
   apt:
@@ -15,4 +16,3 @@ addons:
 env:
   global:
     - CXX14=g++
-    
