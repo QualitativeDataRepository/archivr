@@ -3,3 +3,10 @@
 language: R
 sudo: false
 cache: packages
+
+addons:
+  apt:
+    packages:
+      - libxml2-dev
+      - libpoppler-cpp-dev
+      - libcurl4-openssl-dev
