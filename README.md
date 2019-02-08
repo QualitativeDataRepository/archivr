@@ -1,6 +1,8 @@
 [![Travis build status](https://travis-ci.org/QualitativeDataRepository/archivr.svg?branch=master)](https://travis-ci.org/QualitativeDataRepository/archivr)
 
- [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/QualitativeDataRepository/archivr?branch=master&svg=true)](https://ci.appveyor.com/project/QualitativeDataRepository/archivr)
+ [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/foapvhn9t62mk1cu/branch/master?svg=true)](https://ci.appveyor.com/project/adam3smith/archivr/branch/master)
+ 
+ 
 
 # Archivr
 
