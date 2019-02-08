@@ -10,3 +10,9 @@ addons:
       - libxml2-dev
       - libpoppler-cpp-dev
       - libcurl4-openssl-dev
+      - g++
+
+env:
+  global:
+    - CXX14=g++
+    
