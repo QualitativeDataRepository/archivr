@@ -21,5 +21,5 @@ a vector containing
 Check whether a url is available in Perma.cc
 }
 \examples{
-from_perma("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 }

@@ -360,7 +360,7 @@ from_wayback <- function (url) {
 #'   the archived url.
 #'   the last time the url was crawled.
 #' @examples 
-#' from_perma("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 from_perma_cc <- function (url) {
   envelop = paste0(.perma_cc_api_url, url)
   reply <- fromJSON(envelop)
