@@ -19,3 +19,7 @@ A dataframe containing the original urls, their http status,
 \description{
 Get archiving data from a list of Urls
 }
+\examples{
+urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
+view_archiv(urls, method="both")
+}

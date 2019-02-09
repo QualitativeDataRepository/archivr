@@ -2,12 +2,12 @@
 % Please edit documentation in R/archivr.R
 \name{view_archiv.fromUrl}
 \alias{view_archiv.fromUrl}
-\title{Collect information on whether links in a url are archived.}
+\title{Collect information on whether links contained in a webpage are archived.}
 \usage{
 view_archiv.fromUrl(url, method = "wayback")
 }
 \arguments{
-\item{url}{The url to extract links from.}
+\item{url}{The url of the webpage to extract links from.}
 
 \item{method}{Either "wayback," "perma_cc" or "both".}
 }
@@ -16,5 +16,8 @@ a dataframe containing the url, status, availability,
   archived url(s) and timestamp(s)
 }
 \description{
-Collect information on whether links in a url are archived.
+Collect information on whether links contained in a webpage are archived.
+}
+\examples{
+view_archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="both")
 }

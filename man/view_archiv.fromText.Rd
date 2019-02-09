@@ -18,3 +18,6 @@ a dataframe containing the url, status, availability,
 \description{
 Collect information on whether links in a file are archived.
 }
+\examples{
+view_archiv.fromText("testfile.docx", method="both")
+}

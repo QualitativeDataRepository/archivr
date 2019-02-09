@@ -18,3 +18,12 @@ a dataframe containing the url, status, availability,
 \description{
 Save the links in a url in perma.cc or Wayback.
 }
+\examples{
+# Wayback
+archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+
+#perma.cc
+set_api_key("API KEY")
+set_folder_id("42")
+archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="perma_cc")  
+}

@@ -18,3 +18,12 @@ a dataframe containing the url, status, availability,
 \description{
 Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.
 }
+\examples{
+# Wayback
+archiv.fromText("testdoc.docx")
+
+#perma.cc
+set_api_key("API KEY")
+set_folder_id("42")
+archiv.fromText("testdoc.docx", method="perma_cc")
+}

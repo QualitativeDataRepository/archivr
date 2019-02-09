@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{get_api_key}
 \alias{get_api_key}
-\title{Get the api key if set.}
+\title{Get the perma.cc api key if set.}
 \usage{
 get_api_key()
 }
@@ -10,5 +10,9 @@ get_api_key()
 The current api key state.
 }
 \description{
-Get the api key if set.
+Get the perma.cc api key if set.
+}
+\examples{
+set_api_key("API KEY")
+get_api_key()
 }

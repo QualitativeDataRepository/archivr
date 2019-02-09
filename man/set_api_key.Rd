@@ -12,3 +12,6 @@ set_api_key(key)
 \description{
 Set the api key(s) for Perma.cc apis, if required.
 }
+\examples{
+set_api_key("API_KEY")
+}

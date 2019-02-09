@@ -18,3 +18,14 @@ A dataframe containing the original urls, the urls to the
 \description{
 Archive a list of urls in Wayback or perma_cc.
 }
+\examples{
+urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
+
+# archive in Wayback machine
+archiv(urls)
+
+# archive in perma.cc
+set_api_key("API KEY")
+set_folder_id("FOLDER ID")
+archiv(urls, method="perma_cc")
+}

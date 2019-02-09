@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{get_folder_id}
 \alias{get_folder_id}
-\title{Get the root folder id for the current api key.}
+\title{Get the folder id set for the current perma.cc api key.}
 \usage{
 get_folder_id()
 }
@@ -10,5 +10,13 @@ get_folder_id()
 The current folder id state.
 }
 \description{
-Get the root folder id for the current api key.
+Will return `NULL` if no id has been explictly set using [set_folder_id()]
+}
+\examples{
+set_api_key("API KEY")
+set_folder_id("42")
+get_folder_id()
+}
+\seealso{
+[get_folder_ids()]
 }

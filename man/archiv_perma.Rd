@@ -15,3 +15,8 @@ A list or object representing the result.
 \description{
 Saves a single url in perma.cc.
 }
+\examples{
+set_api_key("API KEY")
+set_folder_id("FOLDER ID")
+archiv_perma("https://qdr.syr.edu")
+}
