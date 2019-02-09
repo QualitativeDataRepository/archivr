@@ -546,7 +546,6 @@ get_api_key <- function() {
 #' @return The current folder id state.
 #' @seealso [get_folder_ids()]
 #' @examples 
-#' set_api_key("API KEY")
 #' set_folder_id("42")
 #' get_folder_id()
 get_folder_id <- function () {
@@ -561,8 +560,11 @@ get_folder_id <- function () {
 #' @export
 #' @return A list of vectors with the top folder and all its children.
 #' @examples 
+#' \dontrun{
 #' set_api_key("API KEY")
 #' get_folder_ids()
+#' }
+
 get_folder_ids <- function () {
   perma_cc_key <- get_api_key()
   reply <- NULL

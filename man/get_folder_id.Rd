@@ -13,7 +13,6 @@ The current folder id state.
 Will return `NULL` if no id has been explictly set using [set_folder_id()]
 }
 \examples{
-set_api_key("API KEY")
 set_folder_id("42")
 get_folder_id()
 }

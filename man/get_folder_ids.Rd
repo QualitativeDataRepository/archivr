@@ -14,6 +14,8 @@ Use this to find the id of the perma.cc folder you want to set via [set_folder_i
 Requires API key to be set via [archivr::set_api_key()]
 }
 \examples{
+\dontrun{
 set_api_key("API KEY")
 get_folder_ids()
+}
 }
