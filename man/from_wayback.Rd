@@ -21,3 +21,6 @@ a jsonlite object where
 \description{
 Check whether a url is available in the Wayback Machine
 }
+\examples{
+from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+}

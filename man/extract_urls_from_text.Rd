@@ -17,5 +17,7 @@ a List of Urls.
 Text extraction relies on the [readtext::readtext()] function from the package of the same name, so all file formats supported by `readtext` are supported.
 }
 \examples{
+\dontrun{
 extract_urls_from_text("textdoc.docx")
+}
 }

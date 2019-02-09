@@ -19,6 +19,7 @@ a dataframe containing the url, status, availability,
 Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.
 }
 \examples{
+\dontrun{
 # Wayback
 archiv.fromText("testdoc.docx")
 
@@ -26,4 +27,5 @@ archiv.fromText("testdoc.docx")
 set_api_key("API KEY")
 set_folder_id("42")
 archiv.fromText("testdoc.docx", method="perma_cc")
+}
 }

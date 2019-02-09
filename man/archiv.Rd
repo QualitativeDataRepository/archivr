@@ -25,7 +25,10 @@ urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.ne
 archiv(urls)
 
 # archive in perma.cc
+\dontrun{
 set_api_key("API KEY")
 set_folder_id("FOLDER ID")
 archiv(urls, method="perma_cc")
+}
+
 }

@@ -16,7 +16,9 @@ A list or object representing the result.
 Saves a single url in perma.cc.
 }
 \examples{
+\dontrun{
 set_api_key("API KEY")
 set_folder_id("FOLDER ID")
 archiv_perma("https://qdr.syr.edu")
+}
 }
