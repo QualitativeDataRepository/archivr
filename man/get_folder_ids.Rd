@@ -10,7 +10,7 @@ get_folder_ids()
 A list of vectors with the top folder and all its children.
 }
 \description{
-Use this to find the id of the perma.cc folder you want to set via [archivr::set_folder_id()].
+Use this to find the id of the perma.cc folder you want to set via [set_folder_id()].
 Requires API key to be set via [archivr::set_api_key()]
 }
 \examples{

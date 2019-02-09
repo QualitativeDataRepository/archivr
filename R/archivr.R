@@ -21,7 +21,7 @@
 
 #' Archivr: Save Your Websites in Perma.cc or the Wayback Machine
 #'
-#' Archivr is a toolkit for the long-run archiving of Qualitative data.
+#' Archivr is a toolkit for the long-run archiving of qualitative data.
 #' It takes a list of urls and uses either the perma.cc or Wayback Machine
 #' archives to store the webpages for future reference. It will also parse
 #' documents or webpages for urls to be archived.
@@ -128,7 +128,7 @@ archiv <- function (url_list, method="wayback") {
 
 
 #' Creates a json string from a list of urls.
-#'
+#' @export
 #' @param url_list A list of urls.
 #' @return A json string representing the list.
 list_string <- function (url_list) {
@@ -470,6 +470,7 @@ extract_urls_from_folder <- function (fp) {
 #' Works with get_subfolders to flatten the folder ids tree
 #' @param folder_list a list of perma.cc folder objects
 #' @return A list of vectors with the id and name.
+#' @export
 
 check_folder <- function(folder_list) {
   if (is.null(folder_list)) {
@@ -485,6 +486,7 @@ check_folder <- function(folder_list) {
 #' @param id A folder id
 #' @importFrom jsonlite fromJSON
 #' @return A list of vectors with the id and name.
+#' @export
 get_subfolders <- function (id) {
   perma_cc_key <- get('perma_cc_key', envir=archiv_env)
   if (perma_cc_key == "") {
@@ -530,7 +532,7 @@ get_folder_id <- function () {
 
 #' Get the perma.cc folder ids starting from the default folder.
 #' 
-#' Use this to find the id of the perma.cc folder you want to set via [archivr::set_folder_id()].
+#' Use this to find the id of the perma.cc folder you want to set via [set_folder_id()].
 #' Requires API key to be set via [archivr::set_api_key()]
 #' @importFrom jsonlite fromJSON
 #' @export
