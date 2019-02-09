@@ -17,6 +17,8 @@ The id and name of the first top folder (usually "Personal Links")
 Get the folder id of the perma.cc default folder (usually "Personal Links")
 }
 \examples{
+\dontrun{
 set_api_key("API_KEY")
 get_default_folder()
+}
 }

@@ -52,8 +52,11 @@ archiv_env$perma_cc_folder_id <- NULL
 #' @return The id and name of the first top folder (usually "Personal Links")
 #'    in perma.cc
 #' @examples
+#' \dontrun{
 #' set_api_key("API_KEY")
 #' get_default_folder()
+#' }
+
 get_default_folder <- function (default=1) {
   perma_cc_key <- get('perma_cc_key', envir=archiv_env)
   if (perma_cc_key == "") {
