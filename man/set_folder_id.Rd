@@ -17,3 +17,9 @@ TRUE
 \description{
 Set the folder to save items in Perma.cc.
 }
+\examples{
+set_folder_id("42")
+}
+\seealso{
+[get_folder_ids()]
+}

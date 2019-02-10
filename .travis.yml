@@ -4,6 +4,9 @@ language: R
 sudo: false
 cache: packages
 dist: xenial
+branches:
+  only:
+    - master
 
 addons:
   apt:

@@ -20,3 +20,6 @@ a vector containing
 \description{
 Check whether a url is available in Perma.cc
 }
+\examples{
+from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+}

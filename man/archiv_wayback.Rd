@@ -15,3 +15,6 @@ A list or object representing the result.
 \description{
 Save a url on the wayback machine.
 }
+\examples{
+archiv_wayback("https://qdr.syr.edu")
+}

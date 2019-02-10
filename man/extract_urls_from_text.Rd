@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{extract_urls_from_text}
 \alias{extract_urls_from_text}
-\title{Get the urls from a text file or string}
+\title{Get the urls from a text file, .pdf file, .docx file, or string}
 \usage{
 extract_urls_from_text(fp)
 }
@@ -13,5 +13,11 @@ extract_urls_from_text(fp)
 a List of Urls.
 }
 \description{
-Get the urls from a text file or string
+`extract_urls_from_text` is called internally from `archiv.fromText` but can be useful as a separate function if you want to filter which links you archive.
+Text extraction relies on the [readtext::readtext()] function from the package of the same name, so all file formats supported by `readtext` are supported.
+}
+\examples{
+\dontrun{
+extract_urls_from_text("textdoc.docx")
+}
 }

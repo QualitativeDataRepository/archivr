@@ -13,5 +13,9 @@ extract_urls_from_webpage(url)
 a vector of urls.
 }
 \description{
-Extracts the urls from a webpage.
+The function works simply by extracting the `href`` attribute from all `a` nodes.
+It is called internally from `archiv.fromUrl` but can be useful as a separate function if you want to filter which links you archive.
+}
+\examples{
+extract_urls_from_webpage("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 }

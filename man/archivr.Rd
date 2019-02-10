@@ -6,8 +6,8 @@
 \alias{archivr-package}
 \title{Archivr: Save Your Websites in Perma.cc or the Wayback Machine}
 \description{
-Archivr is a toolkit for the long-run archiving of Qualitative data.
+Archivr is a toolkit for the long-run archiving of qualitative data.
 It takes a list of urls and uses either the perma.cc or Wayback Machine
 archives to store the webpages for future reference. It will also parse
-word or html documents for urls to be archived.
+documents or webpages for urls to be archived.
 }

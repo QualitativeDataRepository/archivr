@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{get_folder_ids}
 \alias{get_folder_ids}
-\title{Get the folder ids starting from the default folder.}
+\title{Get the perma.cc folder ids starting from the default folder.}
 \usage{
 get_folder_ids()
 }
@@ -10,5 +10,12 @@ get_folder_ids()
 A list of vectors with the top folder and all its children.
 }
 \description{
-Get the folder ids starting from the default folder.
+Use this to find the id of the perma.cc folder you want to set via [set_folder_id()].
+Requires API key to be set via [archivr::set_api_key()]
+}
+\examples{
+\dontrun{
+set_api_key("API KEY")
+get_folder_ids()
+}
 }

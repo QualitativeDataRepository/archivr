@@ -2,7 +2,7 @@
 % Please edit documentation in R/archivr.R
 \name{extract_urls_from_folder}
 \alias{extract_urls_from_folder}
-\title{Get the urls from all text files in a folder}
+\title{Get the urls from all text, pdf, or docx files in a folder}
 \usage{
 extract_urls_from_folder(fp)
 }
@@ -13,5 +13,5 @@ extract_urls_from_folder(fp)
 A list of urls.
 }
 \description{
-Get the urls from all text files in a folder
+Get the urls from all text, pdf, or docx files in a folder
 }
