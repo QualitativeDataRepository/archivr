@@ -98,17 +98,18 @@ get_default_folder <- function (default=1) {
 #'   archived website. For Perma.cc also the URL to the screenshot, the short URL and a timestamp.
 #' @examples
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
-#' 
+#'
 #' # archive in Wayback machine
 #' archiv(urls)
-#' 
+#'
 #' # archive in perma.cc
 #' \dontrun{
 #' set_api_key("API KEY")
 #' set_folder_id("FOLDER ID")
 #' archiv(urls, method="perma_cc")
 #' }
-#' 
+#'
+
 archiv <- function (url_list, method="wayback") {
   if (method == "perma_cc") {
     fold <- get_folder_id()
@@ -131,7 +132,6 @@ archiv <- function (url_list, method="wayback") {
     return (df)
   }
 }
-
 
 #' Creates a json string from a list of urls.
 #' @export
@@ -185,6 +185,7 @@ archiv_perma <- function (arc_url) {
                   reply$captures[1,]$playback_url, reply$captures[2,]$playback_url,
                   paste0("https://perma.cc/", reply$guid))
     }
+    result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
     return(result)
   }
 }
@@ -194,7 +195,7 @@ archiv_perma <- function (arc_url) {
 #' @import curl
 #' @export
 #' @return A list or object representing the result.
-#' @examples 
+#' @examples
 #' archiv_wayback("https://qdr.syr.edu")
 archiv_wayback <- function (arc_url) {
   envelop <- paste0(.wb_save_url, arc_url)
@@ -217,7 +218,7 @@ archiv_wayback <- function (arc_url) {
 #' @return A dataframe containing the original urls, their http status,
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
-#' @examples 
+#' @examples
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
 #' view_archiv(urls, method="both")
 view_archiv <- function (lst, method="wayback") {
@@ -261,7 +262,7 @@ view_archiv <- function (lst, method="wayback") {
 #' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-#' @examples 
+#' @examples
 #' view_archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="both")
 view_archiv.fromUrl <- function (url, method="wayback") {
   return(view_archiv(extract_urls_from_webpage(url), method))
@@ -277,7 +278,7 @@ view_archiv.fromUrl <- function (url, method="wayback") {
 #' @examples
 #' \dontrun{\
 #' view_archiv.fromText("testfile.docx", method="both")
-#' } 
+#' }
 
 view_archiv.fromText <- function (fp, method="wayback") {
   return(view_archiv(extract_urls_from_text(fp), method))
@@ -290,10 +291,10 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-#' @examples 
+#' @examples
 #' # Wayback
 #' archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
-#' 
+#'
 #' #perma.cc
 #' \dontrun{
 #' set_api_key("API KEY")
@@ -311,11 +312,11 @@ archiv.fromUrl <- function (url, method="wayback") {
 #' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
-#' @examples 
+#' @examples
 #' \dontrun{
 #' # Wayback
 #' archiv.fromText("testdoc.docx")
-#' 
+#'
 #' #perma.cc
 #' set_api_key("API KEY")
 #' set_folder_id("42")
@@ -337,7 +338,7 @@ archiv.fromText <- function (fp, method="wayback") {
 #'   object$archived_snapshots$closest$url is the archived url.
 #'   object$archived_snapshots$closest$timestamp is the last time the url
 #'     was crawled.
-#' @examples 
+#' @examples
 #' from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 from_wayback <- function (url) {
   envelop = paste0(.wb_available_url, url)
@@ -362,7 +363,7 @@ from_wayback <- function (url) {
 #'   TRUE if successful or FALSE
 #'   the archived url.
 #'   the last time the url was crawled.
-#' @examples 
+#' @examples
 #' from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 from_perma_cc <- function (url) {
   envelop = paste0(.perma_cc_api_url, url)
@@ -401,7 +402,7 @@ set_api_key <- function (key) {
 #' @export
 #' @seealso [get_folder_ids()]
 #' @return TRUE
-#' @examples 
+#' @examples
 #' set_folder_id("42")
 set_folder_id <- function (id) {
   old <- archiv_env$perma_cc_folder_id
@@ -427,7 +428,7 @@ extract_urls_from_webpage <- function (url) {
 }
 
 #' Get the urls from a text file, .pdf file, .docx file, or string
-#' 
+#'
 #' `extract_urls_from_text` is called internally from `archiv.fromText` but can be useful as a separate function if you want to filter which links you archive.
 #' Text extraction relies on the [readtext::readtext()] function from the package of the same name, so all file formats supported by `readtext` are supported.
 #' @param fp A filepath or string.
@@ -540,12 +541,12 @@ get_api_key <- function() {
 }
 
 #' Get the folder id set for the current perma.cc api key.
-#' 
+#'
 #' Will return `NULL` if no id has been explictly set using [set_folder_id()]
 #' @export
 #' @return The current folder id state.
 #' @seealso [get_folder_ids()]
-#' @examples 
+#' @examples
 #' set_folder_id("42")
 #' get_folder_id()
 get_folder_id <- function () {
@@ -553,13 +554,13 @@ get_folder_id <- function () {
 }
 
 #' Get the perma.cc folder ids starting from the default folder.
-#' 
+#'
 #' Use this to find the id of the perma.cc folder you want to set via [set_folder_id()].
 #' Requires API key to be set via [archivr::set_api_key()]
 #' @importFrom jsonlite fromJSON
 #' @export
 #' @return A list of vectors with the top folder and all its children.
-#' @examples 
+#' @examples
 #' \dontrun{
 #' set_api_key("API KEY")
 #' get_folder_ids()
