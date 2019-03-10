@@ -121,7 +121,6 @@ archiv <- function (url_list, method="wayback") {
         stop("Unable to set perma.cc folder. Make sure you API key is set using 'set_api_key(API_KEY)'")
       }}
     newlst <- lapply(url_list, archiv_perma)
-    print(newlst)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
     colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot", "perma_cc_short_url")
     return(df)
@@ -177,17 +176,18 @@ archiv_perma <- function (arc_url) {
   if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
     stop("Please input your api key:\nUse 'set_api_key(API_KEY)'")
   } else if ((!(is.null(reply$error)))) {
-    print(reply)
     stop("Received an error reply, likely because your limit has been exceeded.")
   } else {
     if (!(is.null(reply$url == "Not a valid URL."))) {
+      print ("pass")
       result <- c(reply$url, reply$guid, reply$archive_timestamp,
                   reply$captures[1,]$playback_url, reply$captures[2,]$playback_url,
                   paste0("https://perma.cc/", reply$guid))
+    } else {
+      print("2nd pass")
     }
-    result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
-    return(result)
   }
+  return(result)
 }
 
 #' Save a url on the wayback machine.
