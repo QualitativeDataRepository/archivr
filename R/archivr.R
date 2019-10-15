@@ -28,8 +28,6 @@
 #' @docType package
 #' @name archivr
 
-
-
 library(readtext)
 library(jsonlite)
 library(xml2)
@@ -115,7 +113,7 @@ archiv <- function (url_list, method="wayback") {
     fold <- get_folder_id()
     if (is.null(fold) || fold == "") {
       print("Setting folder based on api key.")
-      set_folder_id(get_default_folder()[1,]$id)
+      set_folder_id(get_default_folder())
       fold <- toString(get_folder_id())
       if (is.null(fold) || fold == "") {
         stop("Unable to set perma.cc folder. Make sure you API key is set using 'set_api_key(API_KEY)'")
@@ -178,13 +176,11 @@ archiv_perma <- function (arc_url) {
   } else if ((!(is.null(reply$error)))) {
     stop("Received an error reply, likely because your limit has been exceeded.")
   } else {
-    if (!(is.null(reply$url == "Not a valid URL."))) {
-      print ("pass")
+    if (!is.null(reply$url) && !(reply$url == "Not a valid URL.")) {
       result <- c(reply$url, reply$guid, reply$archive_timestamp,
                   reply$captures[1,]$playback_url, reply$captures[2,]$playback_url,
                   paste0("https://perma.cc/", reply$guid))
     } else {
-      print("2nd pass")
     }
   }
   return(result)
@@ -232,7 +228,7 @@ view_archiv <- function (lst, method="wayback") {
       wb <- from_wayback(x)
       pc <- from_perma_cc(x)
       result <- list(x, "000", FALSE, "url not found", "unknown", "url not found", "unknown")
-      if (as.logical((unname(unlist(wb)[3]))) && as.logical(unname(unlist(pc)[3]))) {
+      if (!is.null(unlist(wb)[3]) && !is.null(unname(unlist(pc)[3]))) {
         result <- c(wb$url, wb$archived_snapshots$closest$status,
           wb$archived_snapshots$closest$available,
           wb$archived_snapshots$closest$url,
