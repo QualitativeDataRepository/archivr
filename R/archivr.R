@@ -439,12 +439,26 @@ extract_urls_from_webpage <- function (url) {
 #' }
 extract_urls_from_text <- function (fp) {
   url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
-  # Extensions supported by the readtext:readtext() function
-  readtext_ext <- c("txt", "json", "csv", "tab", "tsv", "html", "xml", "pdf", "odt", "doc", "docx", "rtf")
+  readtext_ext <- c("txt", "json", "csv", "tab", "tsv", "pdf", "odt", "doc", "docx", "rtf")
   text <- tryCatch({
     if (file_ext(fp) %in% readtext_ext) {
       gsub("\\s", " ", readtext(fp)$text)
-    } else {
+    } 
+    else if (file_ext(fp) == "xml") {
+      # Get all text and all attributes and concate them to a single string
+      xmlText <- paste(readtext(file = fp, collapse=" ", verbosity= 0)$text, collapse= " ")
+      xmlAttr <- read_xml(fp) %>% xml_find_all(xpath= "//.") %>% xml_attrs() %>% sapply(paste, collapse = " ") %>% paste(collapse= " ")
+      paste(xmlText, xmlAttr, sep=" ")
+    }
+    else if (file_ext(fp) == "html" || file_ext(fp) == "htm") {
+      # read only the a href attributes starting with http
+      # and immediately return (no need for regex here)
+      pg <- xml2::read_html(fp)
+      lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
+      Filter(function(x)
+        startsWith(x, "http"), lst)
+    }
+    else {
       readChar(fp, file.info(fp)$size)
     }
   }, warning = function(w) {
@@ -452,11 +466,13 @@ extract_urls_from_text <- function (fp) {
   }, error = function(e) {
   }, finally = {
   })
+  
   ext <- gregexpr(url_pattern, text)
   result1 <- unique(unlist(regmatches(text, ext)))
   result2 <- sapply(result1, function(x) {
     last <- str_sub(x, start=-1)
-    if (last == ">" || last == ")" || last ==",") {
+    if (last == ">" || last == ")" || last =="," || last =='<') {
+      print(x)
       return(str_sub(x, 0, -2))
     } else {
       return(x)
@@ -464,6 +480,7 @@ extract_urls_from_text <- function (fp) {
   })
   return (result2)
 }
+
 
 #' Get the urls from all text, pdf, or docx files in a folder
 #'
