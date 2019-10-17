@@ -439,8 +439,10 @@ extract_urls_from_webpage <- function (url) {
 #' }
 extract_urls_from_text <- function (fp) {
   url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+  # Extensions supported by the readtext:readtext() function
+  readtext_ext <- c("txt", "json", "csv", "tab", "tsv", "html", "xml", "pdf", "odt", "doc", "docx", "rtf")
   text <- tryCatch({
-    if (file_ext(fp) == "docx") {
+    if (file_ext(fp) %in% readtext_ext) {
       gsub("\\s", " ", readtext(fp)$text)
     } else {
       readChar(fp, file.info(fp)$size)
