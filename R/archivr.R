@@ -284,6 +284,7 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #'
 #' @param url The url to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
+#' @param except A regular expression for URLs to exclude from extraction
 #' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
@@ -298,13 +299,14 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #' archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="perma_cc")
 #' }
 archiv.fromUrl <- function (url, method="wayback") {
-  return(archiv(extract_urls_from_webpage(url), method))
+  return(archiv(extract_urls_from_webpage(url, except), method))
 }
 
 #' Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.
 #'
 #' @param fp The filepath to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
+#' @param except A regular expression for URLs to exclude from extraction
 #' @export
 #' @return a dataframe containing the url, status, availability,
 #'   archived url(s) and timestamp(s)
@@ -318,8 +320,8 @@ archiv.fromUrl <- function (url, method="wayback") {
 #' set_folder_id("42")
 #' archiv.fromText("testdoc.docx", method="perma_cc")
 #' }
-archiv.fromText <- function (fp, method="wayback") {
-  return(archiv(extract_urls_from_text(fp), method))
+archiv.fromText <- function (fp, method="wayback", except = NULL) {
+  return(archiv(extract_urls_from_text(fp, except), method))
 }
 
 #' Check whether a url is available in the Wayback Machine
@@ -411,14 +413,18 @@ set_folder_id <- function (id) {
 #' The function works simply by extracting the `href`` attribute from all `a` nodes.
 #' It is called internally from `archiv.fromUrl` but can be useful as a separate function if you want to filter which links you archive.
 #' @param url The url to extract urls.
+#' @param except A regular expression for URLs to exclude from extraction
 #' @import rvest xml2
 #' @export
 #' @return a vector of urls.
 #' @examples
 #' extract_urls_from_webpage("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
-extract_urls_from_webpage <- function (url) {
-  pg <- read_html(url)
+extract_urls_from_webpage <- function (url, except = NULL) {
+  pg <- xml2::read_html(url)
   lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
+  if (!is.null(except)) {
+    lst <- Filter(function(x) !grepl(except, x), lst)
+  }
   Filter(function(x)
     startsWith(x, "http"), lst)
 }
@@ -428,6 +434,7 @@ extract_urls_from_webpage <- function (url) {
 #' `extract_urls_from_text` is called internally from `archiv.fromText` but can be useful as a separate function if you want to filter which links you archive.
 #' Text extraction relies on the [readtext::readtext()] function from the package of the same name, so all file formats supported by `readtext` are supported.
 #' @param fp A filepath or string.
+#' @param except A regular expression for URLs to exclude from extraction
 #' @import readtext
 #' @import stringr
 #' @import tools
@@ -437,7 +444,7 @@ extract_urls_from_webpage <- function (url) {
 #' \dontrun{
 #' extract_urls_from_text("textdoc.docx")
 #' }
-extract_urls_from_text <- function (fp) {
+extract_urls_from_text <- function (fp, except = NULL) {
   url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
   readtext_ext <- c("txt", "json", "csv", "tab", "tsv", "pdf", "odt", "doc", "docx", "rtf")
   text <- tryCatch({
@@ -455,6 +462,9 @@ extract_urls_from_text <- function (fp) {
       # and immediately return (no need for regex here)
       pg <- xml2::read_html(fp)
       lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
+      if (!is.null(except)) {
+        lst <- Filter(function(x) !grepl(except, x), lst)
+      }
       Filter(function(x)
         startsWith(x, "http"), lst)
     }
@@ -469,6 +479,10 @@ extract_urls_from_text <- function (fp) {
   
   ext <- gregexpr(url_pattern, text)
   result1 <- unique(unlist(regmatches(text, ext)))
+  # remove except
+  if (!is.null(except)) {
+    result1 <- Filter(function(x) !grepl(except, x), result1)
+  }
   result2 <- sapply(result1, function(x) {
     last <- str_sub(x, start=-1)
     if (last == ">" || last == ")" || last =="," || last =='<') {
