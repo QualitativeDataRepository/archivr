@@ -290,7 +290,7 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' # Wayback
-#' archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", except="validator\\.w3\\.org")
 #'
 #' #perma.cc
 #' \dontrun{
@@ -298,7 +298,7 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #' set_folder_id("42")
 #' archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="perma_cc")
 #' }
-archiv.fromUrl <- function (url, method="wayback") {
+archiv.fromUrl <- function (url, method="wayback", except = NULL) {
   return(archiv(extract_urls_from_webpage(url, except), method))
 }
 
@@ -313,7 +313,7 @@ archiv.fromUrl <- function (url, method="wayback") {
 #' @examples
 #' \dontrun{
 #' # Wayback
-#' archiv.fromText("testdoc.docx")
+#' archiv.fromText("testdoc.docx", except="doi\\.org\\/")
 #'
 #' #perma.cc
 #' set_api_key("API KEY")
@@ -418,7 +418,7 @@ set_folder_id <- function (id) {
 #' @export
 #' @return a vector of urls.
 #' @examples
-#' extract_urls_from_webpage("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' extract_urls_from_webpage("https://www-cs-faculty.stanford.edu/~knuth/retd.html", except="validator\\.w3\\.org")
 extract_urls_from_webpage <- function (url, except = NULL) {
   pg <- xml2::read_html(url)
   lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
@@ -442,7 +442,7 @@ extract_urls_from_webpage <- function (url, except = NULL) {
 #' @return a List of Urls.
 #' @examples
 #' \dontrun{
-#' extract_urls_from_text("textdoc.docx")
+#' extract_urls_from_text("textdoc.docx", except="doi\\.org\\/")
 #' }
 extract_urls_from_text <- function (fp, except = NULL) {
   url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
@@ -450,7 +450,7 @@ extract_urls_from_text <- function (fp, except = NULL) {
   text <- tryCatch({
     if (file_ext(fp) %in% readtext_ext) {
       gsub("\\s", " ", readtext(fp)$text)
-    } 
+    }
     else if (file_ext(fp) == "xml") {
       # Get all text and all attributes and concate them to a single string
       xmlText <- paste(readtext(file = fp, collapse=" ", verbosity= 0)$text, collapse= " ")
