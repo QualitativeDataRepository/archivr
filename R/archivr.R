@@ -93,7 +93,8 @@ get_default_folder <- function (default=1) {
 #' @param method Either "wayback" or "perma_cc." Defaults to "wayback."
 #' @export
 #' @return A dataframe containing the original urls, the urls to the
-#'   archived website and a timestamp. For Perma.cc also the URL to the screenshot, and the short URL.
+#'   archived website and a timestamp. For Perma.cc also the URL to the
+#'   screenshot, and the short URL.
 #' @examples
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
 #'
@@ -116,11 +117,13 @@ archiv <- function (url_list, method="wayback") {
       set_folder_id(get_default_folder())
       fold <- toString(get_folder_id())
       if (is.null(fold) || fold == "") {
-        stop("Unable to set perma.cc folder. Make sure you API key is set using 'set_api_key(API_KEY)'")
+        stop("Unable to set perma.cc folder. Make sure you API key is set using
+             'set_api_key(API_KEY)'")
       }}
     newlst <- lapply(url_list, archiv_perma)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-    colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot", "perma_cc_short_url")
+    colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot",
+                      "perma_cc_short_url")
     return(df)
   } else {
     newlst <- lapply(url_list, archiv_wayback)
@@ -161,7 +164,8 @@ archiv_perma <- function (arc_url) {
   api <- get_api_key()
   fold <- toString(get_folder_id())
   if (is.null(api) || api == "") {
-    stop("API key not set for perma.cc. Use 'set_api_key() to set your key before using method='perma_cc'")
+    stop("API key not set for perma.cc. Use 'set_api_key() to set your key before
+         using method='perma_cc'")
   }
   folder_url <- paste0()
   api_url <- paste0(.perma_cc_post_api_url, api)
@@ -171,7 +175,8 @@ archiv_perma <- function (arc_url) {
   result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
   r <- curl_fetch_memory(api_url, setting)
   reply <- fromJSON(rawToChar(r$content))
-  if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
+  if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials
+      were not provided.") {
     stop("Please input your api key:\nUse 'set_api_key(API_KEY)'")
   } else if ((!(is.null(reply$error)))) {
     stop("Received an error reply, likely because your limit has been exceeded.")
@@ -213,8 +218,8 @@ archiv_wayback <- function (arc_url) {
 #' @export
 #' @return A dataframe containing the original urls,
 #'  availability, the archive url if it exists and a timestamp for the last
-#'  web crawl. 
-#'  
+#'  web crawl.
+#'
 #'  Where method is "both", "availability" is TRUE if the URL is archived by either
 #'  service
 #' @examples
@@ -243,7 +248,8 @@ view_archiv <- function (lst, method="wayback") {
       return(result)
     })
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-    colnames(df) <- c("url",  "available", "wayback_url", "wayback_timestamp", "perma_cc_url", "perma_cc_timestamp")
+    colnames(df) <- c("url",  "available", "wayback_url", "wayback_timestamp",
+                      "perma_cc_url", "perma_cc_timestamp")
     return(df)
   } else {
     print ("Could not confirm method.")
@@ -260,7 +266,10 @@ view_archiv <- function (lst, method="wayback") {
 #' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
-#' checkArchiveStatus <- view_archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="both")
+#' checkArchiveStatus <- view_archiv.fromUrl(
+#'    "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+#'    method="both"
+#'    )
 view_archiv.fromUrl <- function (url, method="wayback") {
   return(view_archiv(extract_urls_from_webpage(url), method))
 }
@@ -291,13 +300,17 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' # Wayback
-#' archivedURLs <- archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", except="validator\\.w3\\.org")
+#' archivedURLs <- archiv.fromUrl(
+#'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+#'      except="validator\\.w3\\.org")
 #'
 #' #perma.cc
 #' \dontrun{
 #' set_api_key("API KEY")
 #' set_folder_id("42")
-#' archivedURLs <- archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="perma_cc")
+#' archivedURLs <- archiv.fromUrl(
+#'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+#'      method="perma_cc")
 #' }
 archiv.fromUrl <- function (url, method="wayback", except = NULL) {
   return(archiv(extract_urls_from_webpage(url, except), method))
@@ -336,7 +349,9 @@ archiv.fromText <- function (fp, method="wayback", except = NULL) {
 #'   the archived url.
 #'   the last time the url was crawled.
 #' @examples
-#' checkArchiveStatus <- from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' checkArchiveStatus <- from_wayback(
+#'     "https://www-cs-faculty.stanford.edu/~knuth/retd.html"
+#'     )
 from_wayback <- function (url) {
   envelop = paste0(.wb_available_url, url)
   reply <- fromJSON(envelop)
@@ -345,7 +360,8 @@ from_wayback <- function (url) {
     wb <- reply$archived_snapshots$closest
     result = list(url, wb$available, wb$url, wb$timestamp)
   } else {
-    print(paste("Received a NULL value from archived snapshots from Wayback for", url))
+    print(paste("Received a NULL value from archived snapshots from Wayback for",
+                url))
   }
   return (result)
 }
@@ -361,15 +377,19 @@ from_wayback <- function (url) {
 #'   the archived url.
 #'   the last time the url was crawled.
 #' @examples
-#' checkArchiveStatus <- from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' checkArchiveStatus <- from_perma_cc(
+#'     "https://www-cs-faculty.stanford.edu/~knuth/retd.html"
+#'     )
 from_perma_cc <- function (url) {
   envelop = paste0(.perma_cc_api_url, url)
   reply <- fromJSON(envelop)
   result <- list(url, FALSE, "url not found", "unknown")
   if (length(unlist(reply$objects))) {
     step <- unlist(reply$objects)
-    available <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success", TRUE, FALSE)
-    playback_url <- ifelse(is.na(step["captures.playback_url"]), step["captures.playback_url1"], step["captures.playback_url"])
+    available <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success",
+                        TRUE, FALSE)
+    playback_url <- ifelse(is.na(step["captures.playback_url"]), step["captures.playback_url1"],
+                           step["captures.playback_url"])
     timestamp <- ifelse(is.na(step["creation_timestamp"]), "unknown", step["creation_timestamp"])
     result <- list(unname(step["url"]), available, unname(playback_url), unname(timestamp))
   } else if (length(unlist(reply$meta))) {
@@ -414,14 +434,18 @@ set_folder_id <- function (id) {
 #' Extracts the urls from a webpage.
 #'
 #' The function works simply by extracting the `href`` attribute from all `a` nodes.
-#' It is called internally from `archiv.fromUrl` but can be useful as a separate function if you want to filter which links you archive.
+#' It is called internally from `archiv.fromUrl` but can be useful as a separate function
+#' if you want to filter which links you archive.
 #' @param url The url to extract urls.
 #' @param except A regular expression for URLs to exclude from extraction
 #' @import rvest xml2
 #' @export
 #' @return a vector of urls.
 #' @examples
-#' urlList <- extract_urls_from_webpage("https://www-cs-faculty.stanford.edu/~knuth/retd.html", except="validator\\.w3\\.org")
+#' urlList <- extract_urls_from_webpage(
+#'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+#'      except="validator\\.w3\\.org"
+#'      )
 extract_urls_from_webpage <- function (url, except = NULL) {
   pg <- xml2::read_html(url)
   lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
@@ -434,8 +458,10 @@ extract_urls_from_webpage <- function (url, except = NULL) {
 
 #' Get the urls from a text file, .pdf file, .docx file, or string
 #'
-#' `extract_urls_from_text` is called internally from `archiv.fromText` but can be useful as a separate function if you want to filter which links you archive.
-#' Text extraction relies on the [readtext::readtext()] function from the package of the same name, so all file formats supported by `readtext` are supported.
+#' `extract_urls_from_text` is called internally from `archiv.fromText` but can be
+#' useful as a separate function if you want to filter which links you archive.
+#' Text extraction relies on the [readtext::readtext()] function from the package of
+#' the same name, so all file formats supported by `readtext` are supported.
 #' @param fp A filepath or string.
 #' @param except A regular expression for URLs to exclude from extraction
 #' @import readtext
@@ -448,7 +474,8 @@ extract_urls_from_webpage <- function (url, except = NULL) {
 #' urlList <- extract_urls_from_text("textdoc.docx", except="doi\\.org\\/")
 #' }
 extract_urls_from_text <- function (fp, except = NULL) {
-  url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+  url_pattern <- 
+    "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
   readtext_ext <- c("txt", "json", "csv", "tab", "tsv", "pdf", "odt", "doc", "docx", "rtf")
   text <- tryCatch({
     if (file_ext(fp) %in% readtext_ext) {
@@ -457,7 +484,8 @@ extract_urls_from_text <- function (fp, except = NULL) {
     else if (file_ext(fp) == "xml") {
       # Get all text and all attributes and concate them to a single string
       xmlText <- paste(readtext(file = fp, collapse=" ", verbosity= 0)$text, collapse= " ")
-      xmlAttr <- read_xml(fp) %>% xml_find_all(xpath= "//.") %>% xml_attrs() %>% sapply(paste, collapse = " ") %>% paste(collapse= " ")
+      xmlAttr <- read_xml(fp) %>% xml_find_all(xpath= "//.") %>% xml_attrs() %>%
+        sapply(paste, collapse = " ") %>% paste(collapse= " ")
       paste(xmlText, xmlAttr, sep=" ")
     }
     else if (file_ext(fp) == "html" || file_ext(fp) == "htm") {
