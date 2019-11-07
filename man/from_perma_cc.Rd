@@ -20,5 +20,7 @@ a list containing
 Check whether a url is available in Perma.cc
 }
 \examples{
-checkArchiveStatus <- from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+checkArchiveStatus <- from_perma_cc(
+    "https://www-cs-faculty.stanford.edu/~knuth/retd.html"
+    )
 }

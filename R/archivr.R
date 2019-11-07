@@ -302,7 +302,8 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #' # Wayback
 #' archivedURLs <- archiv.fromUrl(
 #'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
-#'      except="validator\\.w3\\.org")
+#'      except="validator\\.w3\\.org"
+#'      )
 #'
 #' #perma.cc
 #' \dontrun{
@@ -310,7 +311,8 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #' set_folder_id("42")
 #' archivedURLs <- archiv.fromUrl(
 #'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
-#'      method="perma_cc")
+#'      method="perma_cc"
+#'      )
 #' }
 archiv.fromUrl <- function (url, method="wayback", except = NULL) {
   return(archiv(extract_urls_from_webpage(url, except), method))

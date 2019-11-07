@@ -13,7 +13,8 @@ archiv(url_list, method = "wayback")
 }
 \value{
 A dataframe containing the original urls, the urls to the
-  archived website and a timestamp. For Perma.cc also the URL to the screenshot, and the short URL.
+  archived website and a timestamp. For Perma.cc also the URL to the
+  screenshot, and the short URL.
 }
 \description{
 Archive a list of urls in Wayback or perma_cc.

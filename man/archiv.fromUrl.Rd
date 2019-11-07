@@ -22,12 +22,18 @@ Save the links in a url in perma.cc or Wayback.
 }
 \examples{
 # Wayback
-archivedURLs <- archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", except="validator\\\\.w3\\\\.org")
+archivedURLs <- archiv.fromUrl(
+     "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+     except="validator\\\\.w3\\\\.org"
+     )
 
 #perma.cc
 \dontrun{
 set_api_key("API KEY")
 set_folder_id("42")
-archivedURLs <- archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="perma_cc")
+archivedURLs <- archiv.fromUrl(
+     "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+     method="perma_cc"
+     )
 }
 }

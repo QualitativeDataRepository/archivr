@@ -20,5 +20,7 @@ a list containing
 Check whether a url is available in the Wayback Machine
 }
 \examples{
-checkArchiveStatus <- from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+checkArchiveStatus <- from_wayback(
+    "https://www-cs-faculty.stanford.edu/~knuth/retd.html"
+    )
 }

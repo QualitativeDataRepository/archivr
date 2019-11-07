@@ -14,8 +14,8 @@ view_archiv(lst, method = "wayback")
 \value{
 A dataframe containing the original urls,
  availability, the archive url if it exists and a timestamp for the last
- web crawl. 
- 
+ web crawl.
+
  Where method is "both", "availability" is TRUE if the URL is archived by either
  service
 }
