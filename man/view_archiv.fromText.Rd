@@ -20,6 +20,6 @@ Collect information on whether links in a file are archived.
 }
 \examples{
 \dontrun{\\
-view_archiv.fromText("testfile.docx", method="both")
-} 
+checkArchiveStatus <- view_archiv.fromText("testfile.docx", method="both")
+}
 }

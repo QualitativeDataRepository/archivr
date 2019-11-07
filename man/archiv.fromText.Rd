@@ -4,12 +4,14 @@
 \alias{archiv.fromText}
 \title{Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.}
 \usage{
-archiv.fromText(fp, method = "wayback")
+archiv.fromText(fp, method = "wayback", except = NULL)
 }
 \arguments{
 \item{fp}{The filepath to extract links from.}
 
 \item{method}{Either "wayback," "perma_cc" or "both".}
+
+\item{except}{A regular expression for URLs to exclude from extraction}
 }
 \value{
 a dataframe containing the url, status, availability,
@@ -21,11 +23,11 @@ Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.
 \examples{
 \dontrun{
 # Wayback
-archiv.fromText("testdoc.docx")
+archivedURLs <- archiv.fromText("testdoc.docx", except="doi\\\\.org\\\\/")
 
 #perma.cc
 set_api_key("API KEY")
 set_folder_id("42")
-archiv.fromText("testdoc.docx", method="perma_cc")
+archivedURLs <- archiv.fromText("testdoc.docx", method="perma_cc")
 }
 }

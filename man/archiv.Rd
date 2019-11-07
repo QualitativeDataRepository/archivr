@@ -28,7 +28,7 @@ archiv(urls)
 \dontrun{
 set_api_key("API KEY")
 set_folder_id("FOLDER ID")
-archiv(urls, method="perma_cc")
+archivedURLs <- archiv(urls, method="perma_cc")
 }
 
 }

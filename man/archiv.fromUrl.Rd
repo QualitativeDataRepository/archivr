@@ -4,12 +4,14 @@
 \alias{archiv.fromUrl}
 \title{Save the links in a url in perma.cc or Wayback.}
 \usage{
-archiv.fromUrl(url, method = "wayback")
+archiv.fromUrl(url, method = "wayback", except = NULL)
 }
 \arguments{
 \item{url}{The url to extract links from.}
 
 \item{method}{Either "wayback," "perma_cc" or "both".}
+
+\item{except}{A regular expression for URLs to exclude from extraction}
 }
 \value{
 a dataframe containing the url, status, availability,
@@ -20,12 +22,12 @@ Save the links in a url in perma.cc or Wayback.
 }
 \examples{
 # Wayback
-archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+archivedURLs <- archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", except="validator\\\\.w3\\\\.org")
 
 #perma.cc
 \dontrun{
 set_api_key("API KEY")
 set_folder_id("42")
-archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="perma_cc")
+archivedURLs <- archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="perma_cc")
 }
 }

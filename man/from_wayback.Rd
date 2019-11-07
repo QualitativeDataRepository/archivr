@@ -10,17 +10,16 @@ from_wayback(url)
 \item{url}{The url to check.}
 }
 \value{
-a jsonlite object where
-  object$url is the original url.
-  object$$archived_snapshots$closest$status is the http status
-  object$archived_snapshots$closest$available is TRUE
-  object$archived_snapshots$closest$url is the archived url.
-  object$archived_snapshots$closest$timestamp is the last time the url
-    was crawled.
+a list containing
+  the original url.
+  the http status
+  TRUE if successful or FALSE
+  the archived url.
+  the last time the url was crawled.
 }
 \description{
 Check whether a url is available in the Wayback Machine
 }
 \examples{
-from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+checkStatus <- from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 }

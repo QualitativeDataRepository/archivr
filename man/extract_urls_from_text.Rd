@@ -4,10 +4,12 @@
 \alias{extract_urls_from_text}
 \title{Get the urls from a text file, .pdf file, .docx file, or string}
 \usage{
-extract_urls_from_text(fp)
+extract_urls_from_text(fp, except = NULL)
 }
 \arguments{
 \item{fp}{A filepath or string.}
+
+\item{except}{A regular expression for URLs to exclude from extraction}
 }
 \value{
 a List of Urls.
@@ -18,6 +20,6 @@ Text extraction relies on the [readtext::readtext()] function from the package o
 }
 \examples{
 \dontrun{
-extract_urls_from_text("textdoc.docx")
+urlList <- extract_urls_from_text("textdoc.docx", except="doi\\\\.org\\\\/")
 }
 }

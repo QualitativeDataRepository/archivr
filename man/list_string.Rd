@@ -17,5 +17,5 @@ Creates a json string from a list of urls.
 }
 \examples{
 urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
-list_string(urls)
+jsonURLs <- list_string(urls)
 }

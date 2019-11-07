@@ -10,7 +10,7 @@ from_perma_cc(url)
 \item{url}{The url to check.}
 }
 \value{
-a vector containing
+a list containing
   the original url.
   the http status
   TRUE if successful or FALSE
@@ -21,5 +21,5 @@ a vector containing
 Check whether a url is available in Perma.cc
 }
 \examples{
-from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+checkStatus <- from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 }
