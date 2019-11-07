@@ -12,7 +12,6 @@ from_perma_cc(url)
 \value{
 a list containing
   the original url.
-  the http status
   TRUE if successful or FALSE
   the archived url.
   the last time the url was crawled.
@@ -21,5 +20,5 @@ a list containing
 Check whether a url is available in Perma.cc
 }
 \examples{
-checkStatus <- from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+checkArchiveStatus <- from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 }

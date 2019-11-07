@@ -93,18 +93,18 @@ get_default_folder <- function (default=1) {
 #' @param method Either "wayback" or "perma_cc." Defaults to "wayback."
 #' @export
 #' @return A dataframe containing the original urls, the urls to the
-#'   archived website. For Perma.cc also the URL to the screenshot, the short URL and a timestamp.
+#'   archived website and a timestamp. For Perma.cc also the URL to the screenshot, and the short URL.
 #' @examples
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
 #'
 #' # archive in Wayback machine
-#' archiv(urls)
+#' archivedUrls <- archiv(urls)
 #'
 #' # archive in perma.cc
 #' \dontrun{
 #' set_api_key("API KEY")
 #' set_folder_id("FOLDER ID")
-#' archivedURLs <- archiv(urls, method="perma_cc")
+#' archivedUrls <- archiv(urls, method="perma_cc")
 #' }
 #'
 
@@ -125,7 +125,7 @@ archiv <- function (url_list, method="wayback") {
   } else {
     newlst <- lapply(url_list, archiv_wayback)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-    colnames(df) <- c("url", "status", "available?", "wayback_url", "timestamp")
+    colnames(df) <- c("url", "available", "wayback_url", "timestamp")
     return (df)
   }
 }
@@ -190,7 +190,7 @@ archiv_perma <- function (arc_url) {
 #' @param arc_url - the url to archive.
 #' @import curl
 #' @export
-#' @return A list or object representing the result.
+#' @return A list representing the result.
 #' @examples
 #' archivedUrl <- archiv_wayback("https://qdr.syr.edu")
 archiv_wayback <- function (arc_url) {
@@ -257,7 +257,7 @@ view_archiv <- function (lst, method="wayback") {
 #' @param url The url of the webpage to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
 #' @export
-#' @return a dataframe containing the url, status, availability,
+#' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' checkArchiveStatus <- view_archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="both")
@@ -270,7 +270,7 @@ view_archiv.fromUrl <- function (url, method="wayback") {
 #' @param fp The filepath to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
 #' @export
-#' @return a dataframe containing the url, status, availability,
+#' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' \dontrun{\
@@ -287,7 +287,7 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #' @param method Either "wayback," "perma_cc" or "both".
 #' @param except A regular expression for URLs to exclude from extraction
 #' @export
-#' @return a dataframe containing the url, status, availability,
+#' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' # Wayback
@@ -309,7 +309,7 @@ archiv.fromUrl <- function (url, method="wayback", except = NULL) {
 #' @param method Either "wayback," "perma_cc" or "both".
 #' @param except A regular expression for URLs to exclude from extraction
 #' @export
-#' @return a dataframe containing the url, status, availability,
+#' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' \dontrun{
@@ -332,12 +332,11 @@ archiv.fromText <- function (fp, method="wayback", except = NULL) {
 #' @export
 #' @return a list containing
 #'   the original url.
-#'   the http status
 #'   TRUE if successful or FALSE
 #'   the archived url.
 #'   the last time the url was crawled.
 #' @examples
-#' checkStatus <- from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' checkArchiveStatus <- from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 from_wayback <- function (url) {
   envelop = paste0(.wb_available_url, url)
   reply <- fromJSON(envelop)
@@ -358,12 +357,11 @@ from_wayback <- function (url) {
 #' @export
 #' @return a list containing
 #'   the original url.
-#'   the http status
 #'   TRUE if successful or FALSE
 #'   the archived url.
 #'   the last time the url was crawled.
 #' @examples
-#' checkStatus <- from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' checkArchiveStatus <- from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 from_perma_cc <- function (url) {
   envelop = paste0(.perma_cc_api_url, url)
   reply <- fromJSON(envelop)

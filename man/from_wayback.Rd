@@ -12,7 +12,6 @@ from_wayback(url)
 \value{
 a list containing
   the original url.
-  the http status
   TRUE if successful or FALSE
   the archived url.
   the last time the url was crawled.
@@ -21,5 +20,5 @@ a list containing
 Check whether a url is available in the Wayback Machine
 }
 \examples{
-checkStatus <- from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+checkArchiveStatus <- from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
 }

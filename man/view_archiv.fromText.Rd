@@ -12,7 +12,7 @@ view_archiv.fromText(fp, method = "wayback")
 \item{method}{Either "wayback," "perma_cc" or "both".}
 }
 \value{
-a dataframe containing the url, status, availability,
+a dataframe containing the url, availability,
   archived url(s) and timestamp(s)
 }
 \description{

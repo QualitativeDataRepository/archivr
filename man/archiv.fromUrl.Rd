@@ -14,7 +14,7 @@ archiv.fromUrl(url, method = "wayback", except = NULL)
 \item{except}{A regular expression for URLs to exclude from extraction}
 }
 \value{
-a dataframe containing the url, status, availability,
+a dataframe containing the url, availability,
   archived url(s) and timestamp(s)
 }
 \description{
