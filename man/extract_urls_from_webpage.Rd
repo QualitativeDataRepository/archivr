@@ -4,18 +4,24 @@
 \alias{extract_urls_from_webpage}
 \title{Extracts the urls from a webpage.}
 \usage{
-extract_urls_from_webpage(url)
+extract_urls_from_webpage(url, except = NULL)
 }
 \arguments{
 \item{url}{The url to extract urls.}
+
+\item{except}{A regular expression for URLs to exclude from extraction}
 }
 \value{
 a vector of urls.
 }
 \description{
 The function works simply by extracting the `href`` attribute from all `a` nodes.
-It is called internally from `archiv.fromUrl` but can be useful as a separate function if you want to filter which links you archive.
+It is called internally from `archiv.fromUrl` but can be useful as a separate function
+if you want to filter which links you archive.
 }
 \examples{
-extract_urls_from_webpage("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+urlList <- extract_urls_from_webpage(
+     "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+     except="validator\\\\.w3\\\\.org"
+     )
 }

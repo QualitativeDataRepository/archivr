@@ -12,12 +12,15 @@ view_archiv.fromUrl(url, method = "wayback")
 \item{method}{Either "wayback," "perma_cc" or "both".}
 }
 \value{
-a dataframe containing the url, status, availability,
+a dataframe containing the url, availability,
   archived url(s) and timestamp(s)
 }
 \description{
 Collect information on whether links contained in a webpage are archived.
 }
 \examples{
-view_archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="both")
+checkArchiveStatus <- view_archiv.fromUrl(
+   "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+   method="both"
+   )
 }

@@ -10,11 +10,11 @@ archiv_wayback(arc_url)
 \item{arc_url}{- the url to archive.}
 }
 \value{
-A list or object representing the result.
+A list representing the result.
 }
 \description{
 Save a url on the wayback machine.
 }
 \examples{
-archiv_wayback("https://qdr.syr.edu")
+archivedUrl <- archiv_wayback("https://qdr.syr.edu")
 }

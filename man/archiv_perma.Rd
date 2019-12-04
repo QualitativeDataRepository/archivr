@@ -19,6 +19,6 @@ Saves a single url in perma.cc.
 \dontrun{
 set_api_key("API KEY")
 set_folder_id("FOLDER ID")
-archiv_perma("https://qdr.syr.edu")
+archivedUrl <- archiv_perma("https://qdr.syr.edu")
 }
 }

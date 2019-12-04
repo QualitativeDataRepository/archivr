@@ -12,7 +12,7 @@ view_archiv.fromText(fp, method = "wayback")
 \item{method}{Either "wayback," "perma_cc" or "both".}
 }
 \value{
-a dataframe containing the url, status, availability,
+a dataframe containing the url, availability,
   archived url(s) and timestamp(s)
 }
 \description{
@@ -20,6 +20,6 @@ Collect information on whether links in a file are archived.
 }
 \examples{
 \dontrun{\\
-view_archiv.fromText("testfile.docx", method="both")
-} 
+checkArchiveStatus <- view_archiv.fromText("testfile.docx", method="both")
+}
 }

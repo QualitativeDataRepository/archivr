@@ -19,6 +19,6 @@ Get the folder id of the perma.cc default folder (usually "Personal Links")
 \examples{
 \dontrun{
 set_api_key("API_KEY")
-get_default_folder()
+permaFolder <- get_default_folder()
 }
 }

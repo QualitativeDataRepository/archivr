@@ -36,8 +36,7 @@ arc_df$way_back_url
 ```
 
 
-Archiv can archive all the urls in a webpage. This feature is subject to restrictions
-imposed on accounts
+Archiv can archive all the urls in a webpage.
 
 ```
 arc_url_df <- archiv.fromUrl("https://qdr.syr.edu/")
@@ -56,6 +55,14 @@ arc_url_df <- archiv.fromText("path_to_file")
 ```
 
 To allow for pre-processing of URLs before archiving, `archivr` also provides access to the funcitons used to extract URLs from a webpage (`extract_urls_from_webpage("URL")`), from a files (`extract_urls_from_text("filepath")`) (tested for .docx, markdown, and pdf), and from any supported text file in a folder (`extract_urls_from_folder("filepath")`)
+
+### Excempting Urls
+Any of the functions that extract or archiv URLs from a document or URL, accept an `except` parameter, a regular expression (using R's `grepl` function) that will exclude URLs from extraction and archiving. E.g.
+
+```
+arc_url_df <- archiv.fromText("article.pdf", except="https?:\\/\\/(dx\\.)?doi\\.org\\/")
+```
+will exclude DOI links from archiving.
 
 ### Checking archiving status
 

@@ -52,7 +52,7 @@ archiv_env$perma_cc_folder_id <- NULL
 #' @examples
 #' \dontrun{
 #' set_api_key("API_KEY")
-#' get_default_folder()
+#' permaFolder <- get_default_folder()
 #' }
 
 get_default_folder <- function (default=1) {
@@ -93,18 +93,19 @@ get_default_folder <- function (default=1) {
 #' @param method Either "wayback" or "perma_cc." Defaults to "wayback."
 #' @export
 #' @return A dataframe containing the original urls, the urls to the
-#'   archived website. For Perma.cc also the URL to the screenshot, the short URL and a timestamp.
+#'   archived website and a timestamp. For Perma.cc also the URL to the
+#'   screenshot, and the short URL.
 #' @examples
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
 #'
 #' # archive in Wayback machine
-#' archiv(urls)
+#' archivedUrls <- archiv(urls)
 #'
 #' # archive in perma.cc
 #' \dontrun{
 #' set_api_key("API KEY")
 #' set_folder_id("FOLDER ID")
-#' archiv(urls, method="perma_cc")
+#' archivedUrls <- archiv(urls, method="perma_cc")
 #' }
 #'
 
@@ -116,16 +117,18 @@ archiv <- function (url_list, method="wayback") {
       set_folder_id(get_default_folder())
       fold <- toString(get_folder_id())
       if (is.null(fold) || fold == "") {
-        stop("Unable to set perma.cc folder. Make sure you API key is set using 'set_api_key(API_KEY)'")
+        stop("Unable to set perma.cc folder. Make sure you API key is set using
+             'set_api_key(API_KEY)'")
       }}
     newlst <- lapply(url_list, archiv_perma)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-    colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot", "perma_cc_short_url")
+    colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot",
+                      "perma_cc_short_url")
     return(df)
   } else {
     newlst <- lapply(url_list, archiv_wayback)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-    colnames(df) <- c("url", "status", "available?", "wayback_url", "timestamp")
+    colnames(df) <- c("url", "available", "wayback_url", "timestamp")
     return (df)
   }
 }
@@ -136,7 +139,7 @@ archiv <- function (url_list, method="wayback") {
 #' @return A json string representing the list.
 #' @examples
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
-#' list_string(urls)
+#' jsonURLs <- list_string(urls)
 list_string <- function (url_list) {
   quotes <- paste('"', url_list, '"', sep="")
   string <- paste (quotes, sep=", ", collapse=", ")
@@ -154,14 +157,15 @@ list_string <- function (url_list) {
 #' \dontrun{
 #' set_api_key("API KEY")
 #' set_folder_id("FOLDER ID")
-#' archiv_perma("https://qdr.syr.edu")
+#' archivedUrl <- archiv_perma("https://qdr.syr.edu")
 #' }
 
 archiv_perma <- function (arc_url) {
   api <- get_api_key()
   fold <- toString(get_folder_id())
   if (is.null(api) || api == "") {
-    stop("API key not set for perma.cc. Use 'set_api_key() to set your key before using method='perma_cc'")
+    stop("API key not set for perma.cc. Use 'set_api_key() to set your key before
+         using method='perma_cc'")
   }
   folder_url <- paste0()
   api_url <- paste0(.perma_cc_post_api_url, api)
@@ -171,7 +175,8 @@ archiv_perma <- function (arc_url) {
   result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
   r <- curl_fetch_memory(api_url, setting)
   reply <- fromJSON(rawToChar(r$content))
-  if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials were not provided.") {
+  if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials
+      were not provided.") {
     stop("Please input your api key:\nUse 'set_api_key(API_KEY)'")
   } else if ((!(is.null(reply$error)))) {
     stop("Received an error reply, likely because your limit has been exceeded.")
@@ -190,9 +195,9 @@ archiv_perma <- function (arc_url) {
 #' @param arc_url - the url to archive.
 #' @import curl
 #' @export
-#' @return A list or object representing the result.
+#' @return A list representing the result.
 #' @examples
-#' archiv_wayback("https://qdr.syr.edu")
+#' archivedUrl <- archiv_wayback("https://qdr.syr.edu")
 archiv_wayback <- function (arc_url) {
   envelop <- paste0(.wb_save_url, arc_url)
   reply <- curl_fetch_memory(envelop)
@@ -200,8 +205,8 @@ archiv_wayback <- function (arc_url) {
     result <- from_wayback(arc_url)
   } else {
     print (paste0 ("Discovered an error in saving the url. Received http status ",
-   reply$status_code, ". Perhaps try again at another time."))
-   result <- from_wayback(arc_url)
+                   reply$status_code, ". Perhaps try again at another time."))
+    result <- from_wayback(arc_url)
   }
   return(result)
 }
@@ -211,39 +216,41 @@ archiv_wayback <- function (arc_url) {
 #' @param lst A list of urls to check.
 #' @param method "wayback", "perma_cc" or "both".
 #' @export
-#' @return A dataframe containing the original urls, their http status,
+#' @return A dataframe containing the original urls,
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
+#'
+#'  Where method is "both", "availability" is TRUE if the URL is archived by either
+#'  service
 #' @examples
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
-#' view_archiv(urls, method="both")
+#' checkArchiveStatus <- view_archiv(urls, method="both")
 view_archiv <- function (lst, method="wayback") {
   if (method == "perma_cc") {
     newlst <- lapply(lst, from_perma_cc)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-    colnames(df) <- c("url", "status", "available?", "perma_cc_url", "timestamp")
-    return(df)
-  } else if (method == "both") {
-    newlst <- lapply(lst, function(x) {
-      wb <- from_wayback(x)
-      pc <- from_perma_cc(x)
-      result <- list(x, "000", FALSE, "url not found", "unknown", "url not found", "unknown")
-      if (!is.null(unlist(wb)[3]) && !is.null(unname(unlist(pc)[3]))) {
-        result <- c(wb$url, wb$archived_snapshots$closest$status,
-          wb$archived_snapshots$closest$available,
-          wb$archived_snapshots$closest$url,
-          wb$archived_snapshots$closest$timestamp, pc[[4]], pc[[5]])
-      }
-      return(result)
-    })
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-    colnames(df) <- c("url", "status", "available?", "wayback_url", "wayback_timestamp", "perma_cc_url", "perma_cc_timestamp")
+    colnames(df) <- c("url", "available", "perma_cc_url", "timestamp")
     return(df)
   } else if (method == "wayback") {
     newlst <- lapply(lst, from_wayback)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
-    colnames(df) <- c("url", "status", "available?", "wayback_url", "timestamp")
+    colnames(df) <- c("url","available", "wayback_url", "timestamp")
     return (df)
+  } else if (method == "both") {
+    newlst <- lapply(lst, function(x) {
+      wb <- from_wayback(x)
+      pc <- from_perma_cc(x)
+      result <- list(x,  FALSE, "url not found", "unknown", "url not found", "unknown")
+      if (isTRUE(wb[[2]]) || isTRUE(pc[[2]])) {
+        print("let's check that we made it")
+        result <- c(wb[[1]], TRUE, wb[[3]], wb[[4]], pc[[3]], pc[[4]])
+      }
+      return(result)
+    })
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    colnames(df) <- c("url",  "available", "wayback_url", "wayback_timestamp",
+                      "perma_cc_url", "perma_cc_timestamp")
+    return(df)
   } else {
     print ("Could not confirm method.")
     return(FALSE)
@@ -256,10 +263,13 @@ view_archiv <- function (lst, method="wayback") {
 #' @param url The url of the webpage to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
 #' @export
-#' @return a dataframe containing the url, status, availability,
+#' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
-#' view_archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="both")
+#' checkArchiveStatus <- view_archiv.fromUrl(
+#'    "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+#'    method="both"
+#'    )
 view_archiv.fromUrl <- function (url, method="wayback") {
   return(view_archiv(extract_urls_from_webpage(url), method))
 }
@@ -269,11 +279,11 @@ view_archiv.fromUrl <- function (url, method="wayback") {
 #' @param fp The filepath to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
 #' @export
-#' @return a dataframe containing the url, status, availability,
+#' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' \dontrun{\
-#' view_archiv.fromText("testfile.docx", method="both")
+#' checkArchiveStatus <- view_archiv.fromText("testfile.docx", method="both")
 #' }
 
 view_archiv.fromText <- function (fp, method="wayback") {
@@ -284,42 +294,50 @@ view_archiv.fromText <- function (fp, method="wayback") {
 #'
 #' @param url The url to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
+#' @param except A regular expression for URLs to exclude from extraction
 #' @export
-#' @return a dataframe containing the url, status, availability,
+#' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' # Wayback
-#' archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' archivedURLs <- archiv.fromUrl(
+#'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+#'      except="validator\\.w3\\.org"
+#'      )
 #'
 #' #perma.cc
 #' \dontrun{
 #' set_api_key("API KEY")
 #' set_folder_id("42")
-#' archiv.fromUrl("https://www-cs-faculty.stanford.edu/~knuth/retd.html", method="perma_cc")
+#' archivedURLs <- archiv.fromUrl(
+#'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+#'      method="perma_cc"
+#'      )
 #' }
-archiv.fromUrl <- function (url, method="wayback") {
-  return(archiv(extract_urls_from_webpage(url), method))
+archiv.fromUrl <- function (url, method="wayback", except = NULL) {
+  return(archiv(extract_urls_from_webpage(url, except), method))
 }
 
 #' Save the links in a text file (docx, pdf, markdown) in perma.cc or Wayback.
 #'
 #' @param fp The filepath to extract links from.
 #' @param method Either "wayback," "perma_cc" or "both".
+#' @param except A regular expression for URLs to exclude from extraction
 #' @export
-#' @return a dataframe containing the url, status, availability,
+#' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
 #' \dontrun{
 #' # Wayback
-#' archiv.fromText("testdoc.docx")
+#' archivedURLs <- archiv.fromText("testdoc.docx", except="doi\\.org\\/")
 #'
 #' #perma.cc
 #' set_api_key("API KEY")
 #' set_folder_id("42")
-#' archiv.fromText("testdoc.docx", method="perma_cc")
+#' archivedURLs <- archiv.fromText("testdoc.docx", method="perma_cc")
 #' }
-archiv.fromText <- function (fp, method="wayback") {
-  return(archiv(extract_urls_from_text(fp), method))
+archiv.fromText <- function (fp, method="wayback", except = NULL) {
+  return(archiv(extract_urls_from_text(fp, except), method))
 }
 
 #' Check whether a url is available in the Wayback Machine
@@ -327,23 +345,25 @@ archiv.fromText <- function (fp, method="wayback") {
 #' @param url The url to check.
 #' @importFrom jsonlite fromJSON
 #' @export
-#' @return a jsonlite object where
-#'   object$url is the original url.
-#'   object$$archived_snapshots$closest$status is the http status
-#'   object$archived_snapshots$closest$available is TRUE
-#'   object$archived_snapshots$closest$url is the archived url.
-#'   object$archived_snapshots$closest$timestamp is the last time the url
-#'     was crawled.
+#' @return a list containing
+#'   the original url.
+#'   TRUE if successful or FALSE
+#'   the archived url.
+#'   the last time the url was crawled.
 #' @examples
-#' from_wayback("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' checkArchiveStatus <- from_wayback(
+#'     "https://www-cs-faculty.stanford.edu/~knuth/retd.html"
+#'     )
 from_wayback <- function (url) {
   envelop = paste0(.wb_available_url, url)
   reply <- fromJSON(envelop)
-  result <- list(url, "000", FALSE, "url not found", "unknown")
+  result <- list(url, FALSE, "url not found", "unknown")
   if (length(reply$archived_snapshots)) {
-    result = reply
+    wb <- reply$archived_snapshots$closest
+    result = list(url, wb$available, wb$url, wb$timestamp)
   } else {
-    print("Received a NULL value from archived snapshots from Wayback.")
+    print(paste("Received a NULL value from archived snapshots from Wayback for",
+                url))
   }
   return (result)
 }
@@ -353,26 +373,33 @@ from_wayback <- function (url) {
 #' @param url The url to check.
 #' @importFrom jsonlite fromJSON
 #' @export
-#' @return a vector containing
+#' @return a list containing
 #'   the original url.
-#'   the http status
 #'   TRUE if successful or FALSE
 #'   the archived url.
 #'   the last time the url was crawled.
 #' @examples
-#' from_perma_cc("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
+#' checkArchiveStatus <- from_perma_cc(
+#'     "https://www-cs-faculty.stanford.edu/~knuth/retd.html"
+#'     )
 from_perma_cc <- function (url) {
   envelop = paste0(.perma_cc_api_url, url)
   reply <- fromJSON(envelop)
-  result <- list(url, "000", FALSE, "url not found", "unknown")
+  result <- list(url, FALSE, "url not found", "unknown")
   if (length(unlist(reply$objects))) {
     step <- unlist(reply$objects)
-    status <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success", "200", "000")
-    available <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success", TRUE, FALSE)
-    playback_url <- ifelse(is.na(step["captures.playback_url"]), step["captures.playback_url1"], step["captures.playback_url"])
+    available <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success",
+                        TRUE, FALSE)
+    playback_url <- ifelse(is.na(step["captures.playback_url"]), step["captures.playback_url1"],
+                           step["captures.playback_url"])
     timestamp <- ifelse(is.na(step["creation_timestamp"]), "unknown", step["creation_timestamp"])
-    result <- c(unname(step["url"]), unname(status), unname(available), unname(playback_url), unname(timestamp))
-  } else {
+    result <- list(unname(step["url"]), available, unname(playback_url), unname(timestamp))
+  } else if (length(unlist(reply$meta))) {
+    # perma_cc returns 0 objects but does return meta for a valid call
+    print(paste("No perma.cc object found for ", url))
+  }
+  else {
+    # something has gone actually wrong
     print ("An error occurred when retrieving perma_cc objects.")
   }
   return(result)
@@ -409,25 +436,36 @@ set_folder_id <- function (id) {
 #' Extracts the urls from a webpage.
 #'
 #' The function works simply by extracting the `href`` attribute from all `a` nodes.
-#' It is called internally from `archiv.fromUrl` but can be useful as a separate function if you want to filter which links you archive.
+#' It is called internally from `archiv.fromUrl` but can be useful as a separate function
+#' if you want to filter which links you archive.
 #' @param url The url to extract urls.
+#' @param except A regular expression for URLs to exclude from extraction
 #' @import rvest xml2
 #' @export
 #' @return a vector of urls.
 #' @examples
-#' extract_urls_from_webpage("https://www-cs-faculty.stanford.edu/~knuth/retd.html")
-extract_urls_from_webpage <- function (url) {
-  pg <- read_html(url)
+#' urlList <- extract_urls_from_webpage(
+#'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
+#'      except="validator\\.w3\\.org"
+#'      )
+extract_urls_from_webpage <- function (url, except = NULL) {
+  pg <- xml2::read_html(url)
   lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
+  if (!is.null(except)) {
+    lst <- Filter(function(x) !grepl(except, x), lst)
+  }
   Filter(function(x)
     startsWith(x, "http"), lst)
 }
 
 #' Get the urls from a text file, .pdf file, .docx file, or string
 #'
-#' `extract_urls_from_text` is called internally from `archiv.fromText` but can be useful as a separate function if you want to filter which links you archive.
-#' Text extraction relies on the [readtext::readtext()] function from the package of the same name, so all file formats supported by `readtext` are supported.
+#' `extract_urls_from_text` is called internally from `archiv.fromText` but can be
+#' useful as a separate function if you want to filter which links you archive.
+#' Text extraction relies on the [readtext::readtext()] function from the package of
+#' the same name, so all file formats supported by `readtext` are supported.
 #' @param fp A filepath or string.
+#' @param except A regular expression for URLs to exclude from extraction
 #' @import readtext
 #' @import stringr
 #' @import tools
@@ -435,16 +473,35 @@ extract_urls_from_webpage <- function (url) {
 #' @return a List of Urls.
 #' @examples
 #' \dontrun{
-#' extract_urls_from_text("textdoc.docx")
+#' urlList <- extract_urls_from_text("textdoc.docx", except="doi\\.org\\/")
 #' }
-extract_urls_from_text <- function (fp) {
-  url_pattern <- "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
-  # Extensions supported by the readtext:readtext() function
-  readtext_ext <- c("txt", "json", "csv", "tab", "tsv", "html", "xml", "pdf", "odt", "doc", "docx", "rtf")
+extract_urls_from_text <- function (fp, except = NULL) {
+  url_pattern <- 
+    "(http[s]?:?\\/\\/|www)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+  readtext_ext <- c("txt", "json", "csv", "tab", "tsv", "pdf", "odt", "doc", "docx", "rtf")
   text <- tryCatch({
     if (file_ext(fp) %in% readtext_ext) {
       gsub("\\s", " ", readtext(fp)$text)
-    } else {
+    }
+    else if (file_ext(fp) == "xml") {
+      # Get all text and all attributes and concate them to a single string
+      xmlText <- paste(readtext(file = fp, collapse=" ", verbosity= 0)$text, collapse= " ")
+      xmlAttr <- read_xml(fp) %>% xml_find_all(xpath= "//.") %>% xml_attrs() %>%
+        sapply(paste, collapse = " ") %>% paste(collapse= " ")
+      paste(xmlText, xmlAttr, sep=" ")
+    }
+    else if (file_ext(fp) == "html" || file_ext(fp) == "htm") {
+      # read only the a href attributes starting with http
+      # and immediately return (no need for regex here)
+      pg <- xml2::read_html(fp)
+      lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
+      if (!is.null(except)) {
+        lst <- Filter(function(x) !grepl(except, x), lst)
+      }
+      Filter(function(x)
+        startsWith(x, "http"), lst)
+    }
+    else {
       readChar(fp, file.info(fp)$size)
     }
   }, warning = function(w) {
@@ -452,11 +509,17 @@ extract_urls_from_text <- function (fp) {
   }, error = function(e) {
   }, finally = {
   })
+  
   ext <- gregexpr(url_pattern, text)
   result1 <- unique(unlist(regmatches(text, ext)))
+  # remove except
+  if (!is.null(except)) {
+    result1 <- Filter(function(x) !grepl(except, x), result1)
+  }
   result2 <- sapply(result1, function(x) {
     last <- str_sub(x, start=-1)
-    if (last == ">" || last == ")" || last ==",") {
+    if (last == ">" || last == ")" || last =="," || last =='<') {
+      print(x)
       return(str_sub(x, 0, -2))
     } else {
       return(x)
@@ -464,6 +527,7 @@ extract_urls_from_text <- function (fp) {
   })
   return (result2)
 }
+
 
 #' Get the urls from all text, pdf, or docx files in a folder
 #'
@@ -524,7 +588,7 @@ get_subfolders <- function (id) {
       fold <- check_folder(data[row,])
       reply <- rbind(reply, fold)
     }
-  return(reply)
+    return(reply)
   }
 }
 
@@ -561,7 +625,7 @@ get_folder_id <- function () {
 #' @examples
 #' \dontrun{
 #' set_api_key("API KEY")
-#' get_folder_ids()
+#' permaFolderIDs <- get_folder_ids()
 #' }
 
 get_folder_ids <- function () {

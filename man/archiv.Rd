@@ -13,7 +13,8 @@ archiv(url_list, method = "wayback")
 }
 \value{
 A dataframe containing the original urls, the urls to the
-  archived website. For Perma.cc also the URL to the screenshot, the short URL and a timestamp.
+  archived website and a timestamp. For Perma.cc also the URL to the
+  screenshot, and the short URL.
 }
 \description{
 Archive a list of urls in Wayback or perma_cc.
@@ -22,13 +23,13 @@ Archive a list of urls in Wayback or perma_cc.
 urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
 
 # archive in Wayback machine
-archiv(urls)
+archivedUrls <- archiv(urls)
 
 # archive in perma.cc
 \dontrun{
 set_api_key("API KEY")
 set_folder_id("FOLDER ID")
-archiv(urls, method="perma_cc")
+archivedUrls <- archiv(urls, method="perma_cc")
 }
 
 }

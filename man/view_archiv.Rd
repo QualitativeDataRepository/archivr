@@ -12,14 +12,17 @@ view_archiv(lst, method = "wayback")
 \item{method}{"wayback", "perma_cc" or "both".}
 }
 \value{
-A dataframe containing the original urls, their http status,
+A dataframe containing the original urls,
  availability, the archive url if it exists and a timestamp for the last
  web crawl.
+
+ Where method is "both", "availability" is TRUE if the URL is archived by either
+ service
 }
 \description{
 Get archiving data from a list of Urls
 }
 \examples{
 urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
-view_archiv(urls, method="both")
+checkArchiveStatus <- view_archiv(urls, method="both")
 }

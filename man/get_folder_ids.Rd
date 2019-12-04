@@ -16,6 +16,6 @@ Requires API key to be set via [archivr::set_api_key()]
 \examples{
 \dontrun{
 set_api_key("API KEY")
-get_folder_ids()
+permaFolderIDs <- get_folder_ids()
 }
 }
