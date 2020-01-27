@@ -6,6 +6,12 @@
 \usage{
 .list_string(url_list)
 }
+\arguments{
+\item{url_list}{a list of URLs}
+}
+\value{
+a JSON string of the URLs
+}
 \description{
 Creates a json string from a list of urls.
 }

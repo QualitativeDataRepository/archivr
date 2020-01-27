@@ -5,7 +5,7 @@
 #' if you want to filter which links you archive.
 #' @param url The url to extract urls.
 #' @param except A regular expression for URLs to exclude from extraction
-#' @importFrom rvest html_attr html_nodes 
+#' @import rvest 
 #' @importFrom xml2 read_html
 #' @export
 #' @return a vector of urls.

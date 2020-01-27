@@ -7,7 +7,7 @@ Authors@R: c(person("Ryan", "Deschamps", email = "ryan.deschamps@gmail.com",
                   role = c("own", "pat")),
                   person("Sebastian", "Karcher", email = "karcher@u.northwestern.edu",
                   role = c("aut")))
-Description: Archive URLs in Perma.cc or the Wayback Machine
+Description: A toolkit to archive links in Perma.cc or the Wayback Machine.
 Maintainer: Sebastian Karcher <karcher@u.northwestern.edu>
 Depends: R (>= 3.1.0)
 Imports:

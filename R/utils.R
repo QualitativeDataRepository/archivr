@@ -1,6 +1,8 @@
 
 
 #' Creates a json string from a list of urls.
+#' @param url_list a list of URLs
+#' @return a JSON string of the URLs
 .list_string <- function (url_list) {
   quotes <- paste('"', url_list, '"', sep="")
   string <- paste (quotes, sep=", ", collapse=", ")
