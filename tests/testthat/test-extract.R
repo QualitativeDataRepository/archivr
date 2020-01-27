@@ -42,6 +42,8 @@ test_that("extracting from a URL works, including except", {
 })
 
 test_that("extract from non-existing URL fails gracefully",{
+  skip_on_cran()
+  skip_on_travis()
   urlList <- extract_urls_from_webpage(
     "http://does-not-exist.r-project.org",
     except="validator\\.w3\\.org")
