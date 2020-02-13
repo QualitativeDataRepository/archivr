@@ -2,6 +2,8 @@ context("Test archving core functionality")
 # We're only running the essential archiving functions on CRAN and Travis to not unecessarily spam the IA
 
 test_that("archiving a list of URLs in Wayback works", {
+  skip_on_cran()
+  skip_on_travis()
   urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/")
 # archive in Wayback machine
   archivedURLs <- archiv(urls)

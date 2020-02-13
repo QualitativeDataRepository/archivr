@@ -19,3 +19,9 @@ addons:
 env:
   global:
     - CXX14=g++
+    
+r_packages:
+  - covr
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'

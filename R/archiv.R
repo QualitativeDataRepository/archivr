@@ -7,13 +7,13 @@
 #'   archived website and a timestamp. For Perma.cc also the URL to the
 #'   screenshot, and the short URL.
 #' @examples
+#' \dontrun{
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
 #'
 #' # archive in Wayback machine
 #' archivedUrls <- archiv(urls)
 #'
 #' # archive in perma.cc
-#' \dontrun{
 #' set_api_key("API KEY")
 #' set_folder_id("FOLDER ID")
 #' archivedUrls <- archiv(urls, method="perma_cc")
@@ -96,7 +96,9 @@ archiv_perma <- function (arc_url) {
 #' @export
 #' @return A list representing the result.
 #' @examples
+#' \dontrun{
 #' archivedUrl <- archiv_wayback("https://qdr.syr.edu")
+#' }
 archiv_wayback <- function (arc_url) {
   envelop <- paste0(.wb_save_url, arc_url)
   reply <- curl_fetch_memory(envelop)
@@ -121,6 +123,7 @@ archiv_wayback <- function (arc_url) {
 #' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
+#' \dontrun{
 #' # Wayback
 #' archivedURLs <- archiv.fromUrl(
 #'      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
@@ -128,7 +131,6 @@ archiv_wayback <- function (arc_url) {
 #'      )
 #'
 #' #perma.cc
-#' \dontrun{
 #' set_api_key("API KEY")
 #' set_folder_id("42")
 #' archivedURLs <- archiv.fromUrl(

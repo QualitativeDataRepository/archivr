@@ -16,5 +16,7 @@ A list representing the result.
 Save a url on the wayback machine.
 }
 \examples{
+\dontrun{
 archivedUrl <- archiv_wayback("https://qdr.syr.edu")
+}
 }

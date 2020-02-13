@@ -21,6 +21,7 @@ a dataframe containing the url, availability,
 Save the links in a url in perma.cc or Wayback.
 }
 \examples{
+\dontrun{
 # Wayback
 archivedURLs <- archiv.fromUrl(
      "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
@@ -28,7 +29,6 @@ archivedURLs <- archiv.fromUrl(
      )
 
 #perma.cc
-\dontrun{
 set_api_key("API KEY")
 set_folder_id("42")
 archivedURLs <- archiv.fromUrl(
