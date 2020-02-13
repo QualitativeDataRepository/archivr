@@ -34,6 +34,12 @@ test_that("extracting from an XML file works", {
   expect_equal(urlList[[1]], "http://ifl.sagepub.com/content/42/4/292")
 })
 
+test_that("extracing from a .html files works, including except", {
+  urlList <- extract_urls_from_text("../data/testhtml.html", except="doi\\.org\\/")
+  expect_length(urlList, 2)
+  expect_equal(urlList[[1]], "http://www.example.com")
+})
+
 test_that("extracting from a URL works, including except", {
   urlList <- extract_urls_from_webpage(
         "https://www-cs-faculty.stanford.edu/~knuth/retd.html",

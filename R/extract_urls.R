@@ -15,7 +15,10 @@
 #'      except="validator\\.w3\\.org"
 #'      )
 extract_urls_from_webpage <- function (url, except = NULL) {
-  pg <- xml2::read_html(url)
+  try(pg <- xml2::read_html(url))
+  if (!exists("pg")) {
+    return (character (0))
+  }
   lst <- unique(html_attr(html_nodes(pg, "a"), "href"))
   if (!is.null(except)) {
     lst <- Filter(function(x) !grepl(except, x), lst)

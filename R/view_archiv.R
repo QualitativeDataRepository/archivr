@@ -120,24 +120,30 @@ view_wayback <- function (url) {
 #'     "https://www-cs-faculty.stanford.edu/~knuth/retd.html"
 #'     )
 view_perma_cc <- function (url) {
-  envelop = paste0(.perma_cc_api_url, url)
+  envelop <-  paste0(.perma_cc_api_url, url)
   reply <- fromJSON(envelop)
   result <- list(url, FALSE, "url not found", "unknown")
   if (length(unlist(reply$objects))) {
-    step <- unlist(reply$objects)
+    # We do have results; grabbing the first one
+    step <- unlist(reply$objects[1,])
     available <- ifelse(step["captures.status"]=="success" || step["captures.status1"] == "success",
                         TRUE, FALSE)
-    playback_url <- ifelse(is.na(step["captures.playback_url"]), step["captures.playback_url1"],
-                           step["captures.playback_url"])
-    timestamp <- ifelse(is.na(step["creation_timestamp"]), "unknown", step["creation_timestamp"])
-    result <- list(unname(step["url"]), available, unname(playback_url), unname(timestamp))
+    
+    perma_url <- ifelse(is.na(step["guid"]), "url not found",
+                           paste0("https://perma.cc/", unname(step["guid"])))
+    
+    
+    timestamp <- ifelse (is.na(step["creation_timestamp"]), "unknown",
+                         step["creation_timestamp"])
+
+
+    result <- list(unname(step["url"]), available, unname(perma_url), unname(timestamp))
   } else if (length(unlist(reply$meta))) {
     # perma_cc returns 0 objects but does return meta for a valid call
-    print(paste("No perma.cc object found for ", url))
-  }
-  else {
+    message(paste("No perma.cc object found for ", url))
+  } else {
     # something has gone actually wrong
-    print ("An error occurred when retrieving perma_cc objects.")
+    warning ("An error occurred when retrieving perma_cc objects.")
   }
   return(result)
 }

@@ -2,11 +2,11 @@ Package: archivr
 Title: Archivr - Save Your Websites in Perma.cc or the Wayback Machine
 Version: 0.0.1
 Authors@R: c(person("Ryan", "Deschamps", email = "ryan.deschamps@gmail.com",
-                  role = c("aut", "cre")),
+                  role = c("aut")),
                   person("Qualitative Data", "Repository", email = "qdr@syr.edu",
                   role = c("own", "pat")),
                   person("Sebastian", "Karcher", email = "karcher@u.northwestern.edu",
-                  role = c("aut")))
+                  role = c("aut", "cre")))
 Description: A toolkit to archive links in Perma.cc or the Wayback Machine.
 Maintainer: Sebastian Karcher <karcher@u.northwestern.edu>
 Depends: R (>= 3.1.0)
@@ -22,4 +22,5 @@ LazyData: true
 RoxygenNote: 7.0.2
 Encoding: UTF-8
 Suggests: 
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    covr

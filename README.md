@@ -1,8 +1,11 @@
+
+<!-- badges: start -->
 [![Travis build status](https://travis-ci.org/QualitativeDataRepository/archivr.svg?branch=master)](https://travis-ci.org/QualitativeDataRepository/archivr)
 
  [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/foapvhn9t62mk1cu/branch/master?svg=true)](https://ci.appveyor.com/project/adam3smith/archivr/branch/master)
  
- 
+  [![Codecov test coverage](https://codecov.io/gh/QualitativeDataRepository/archivr/branch/master/graph/badge.svg)](https://codecov.io/gh/QualitativeDataRepository/archivr?branch=master)
+  <!-- badges: end --> 
 
 # Archivr
 
@@ -56,7 +59,7 @@ arc_url_df <- archiv.fromText("path_to_file")
 
 To allow for pre-processing of URLs before archiving, `archivr` also provides access to the funcitons used to extract URLs from a webpage (`extract_urls_from_webpage("URL")`), from a files (`extract_urls_from_text("filepath")`) (tested for .docx, markdown, and pdf), and from any supported text file in a folder (`extract_urls_from_folder("filepath")`)
 
-### Excempting Urls
+### Exempting Urls
 Any of the functions that extract or archiv URLs from a document or URL, accept an `except` parameter, a regular expression (using R's `grepl` function) that will exclude URLs from extraction and archiving. E.g.
 
 ```
@@ -109,5 +112,5 @@ arc_url_df <- view_archiv(list("www.example.com", "NOTAURL", "www.github.com"), 
 ```
 
 
-**Archivr is a project developed by the Qualitative Data Repository at Syracuse
-University, authored by Ryan Deschamps (greebie on github.com) and Agile Humanities.**
+**Archivr is a project developed and maintained by the Qualitative Data Repository at Syracuse
+University, originally authored by Ryan Deschamps (greebie on github.com) and Agile Humanities.**
