@@ -10,8 +10,11 @@
 #'  Where method is "both", "availability" is TRUE if the URL is archived by either
 #'  service
 #' @examples
+#' \dontrun{
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
 #' checkArchiveStatus <- view_archiv(urls, method="both")
+#' }
+#'
 view_archiv <- function (lst, method="wayback") {
   if (method == "perma_cc") {
     newlst <- lapply(lst, view_perma_cc)
@@ -52,10 +55,13 @@ view_archiv <- function (lst, method="wayback") {
 #' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
+#' \dontrun{
 #' checkArchiveStatus <- view_archiv.fromUrl(
 #'    "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
 #'    method="both"
-#'    )
+#'  )
+#' }
+#' 
 view_archiv.fromUrl <- function (url, method="wayback") {
   return(view_archiv(extract_urls_from_webpage(url), method))
 }
@@ -68,7 +74,7 @@ view_archiv.fromUrl <- function (url, method="wayback") {
 #' @return a dataframe containing the url, availability,
 #'   archived url(s) and timestamp(s)
 #' @examples
-#' \dontrun{\
+#' \dontrun{
 #' checkArchiveStatus <- view_archiv.fromText("testfile.docx", method="both")
 #' }
 

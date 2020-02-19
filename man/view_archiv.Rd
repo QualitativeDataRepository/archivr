@@ -23,6 +23,9 @@ A dataframe containing the original urls,
 Get archiving data from a list of Urls
 }
 \examples{
+\dontrun{
 urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
 checkArchiveStatus <- view_archiv(urls, method="both")
+}
+
 }

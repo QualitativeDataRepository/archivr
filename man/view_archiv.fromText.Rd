@@ -19,7 +19,7 @@ a dataframe containing the url, availability,
 Collect information on whether links in a file are archived.
 }
 \examples{
-\dontrun{\
+\dontrun{
 checkArchiveStatus <- view_archiv.fromText("testfile.docx", method="both")
 }
 }

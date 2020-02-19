@@ -19,8 +19,11 @@ a dataframe containing the url, availability,
 Collect information on whether links contained in a webpage are archived.
 }
 \examples{
+\dontrun{
 checkArchiveStatus <- view_archiv.fromUrl(
    "https://www-cs-faculty.stanford.edu/~knuth/retd.html",
    method="both"
-   )
+ )
+}
+
 }
