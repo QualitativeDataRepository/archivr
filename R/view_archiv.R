@@ -18,12 +18,12 @@
 view_archiv <- function (lst, method="wayback") {
   if (method == "perma_cc") {
     newlst <- lapply(lst, view_perma_cc)
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url", "available", "perma_cc_url", "timestamp")
     return(df)
   } else if (method == "wayback") {
     newlst <- lapply(lst, view_wayback)
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url","available", "wayback_url", "timestamp")
     return (df)
   } else if (method == "both") {
@@ -36,7 +36,7 @@ view_archiv <- function (lst, method="wayback") {
       }
       return(result)
     })
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url",  "available", "wayback_url", "wayback_timestamp",
                       "perma_cc_url", "perma_cc_timestamp")
     return(df)
