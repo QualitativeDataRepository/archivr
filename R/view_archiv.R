@@ -1,3 +1,27 @@
+#' Check whether a url is available from memento
+#'
+#' @param url The url to check.
+#' @import httr
+#' @export
+#' @return a list containing
+#'   the original url.
+#'   the archived url.
+#'   the last time the url was crawled.
+#'
+#' @examples \dontrun{memento_check("https://google.com")}
+memento_check <- function(url) {
+  response <- httr::GET(paste0("http://timetravel.mementoweb.org/api/json/2020/", 
+                               url)) 
+  
+  if (response$status_code==404) {
+    message(paste("No memento snapshot for url:", url))
+  } else if (response$status_code==200) {
+    mementos <- httr::content(response)
+    last <- mementos$mementos$last
+    return(list(url, last$uri[[1]], last$datetime))
+  }
+}
+
 #' Get archiving data from a list of Urls
 #'
 #' @param lst A list of urls to check.
