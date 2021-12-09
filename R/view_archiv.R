@@ -105,7 +105,7 @@ view_wayback <- function (url) {
     wb <- reply$archived_snapshots$closest
     result = list(url, wb$available, wb$url, wb$timestamp)
   } else {
-    print(paste("Received a NULL value from archived snapshots from Wayback for",
+    message(paste("Received a NULL value from archived snapshots from Wayback for",
                 url))
   }
   return (result)
@@ -149,7 +149,7 @@ view_perma_cc <- function (url) {
     message(paste("No perma.cc object found for ", url))
   } else {
     # something has gone actually wrong
-    warning ("An error occurred when retrieving perma_cc objects.")
+    warning("An error occurred when retrieving perma_cc objects.")
   }
   return(result)
 }
