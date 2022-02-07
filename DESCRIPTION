@@ -7,7 +7,7 @@ Authors@R: c(person("Ryan", "Deschamps", email = "ryan.deschamps@gmail.com",
                   role = c("cph")),
                   person("Sebastian", "Karcher", email = "karcher@u.northwestern.edu",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0001-8249-7388")))
-Description: A toolkit to archive links in Perma.cc or the Wayback Machine.
+Description: archivr is a toolkit to automatically submit collections of URLs and generate robust links for archival purposes. Users input a list of currently accessible URLs, and the corresponding robust links are generated and returned. The currently implemented archives are Perma.cc or the Wayback Machine.
 Depends: R (>= 3.1.0)
 Imports:
     rvest,

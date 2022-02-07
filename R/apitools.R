@@ -17,7 +17,6 @@
   return (paste0(url, id, key))
 }
 
-
 # Perma CC API Keys handling
 
 #' Set the api key(s) for Perma.cc apis, if required.
@@ -126,7 +125,7 @@ get_folder_ids <- function () {
       for (row in 1:nrow(data))
         reply <- rbind(reply, .check_folder(data[row,]))
     } else {
-      print ("Error in extracting root folders in perma.cc.")
+      message("Error in extracting root folders in perma.cc.")
     }
   }
   return (reply)

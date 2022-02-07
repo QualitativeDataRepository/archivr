@@ -32,13 +32,13 @@ archiv <- function (url_list, method="wayback") {
              'set_api_key(API_KEY)'")
       }}
     newlst <- lapply(url_list, archiv_perma)
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url", "GUID", "timestamp", "perma_cc_url", "perma_cc_screenshot",
                       "perma_cc_short_url")
     return(df)
   } else {
     newlst <- lapply(url_list, archiv_wayback)
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url", "available", "wayback_url", "timestamp")
     return (df)
   }

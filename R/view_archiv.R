@@ -1,7 +1,32 @@
+#' Check whether a url is available from archive.md via memento
+#'
+#' @param url The url to check.
+#' @import httr
+#' @export
+#' @return a list containing
+#'   the original url.
+#'   Whether it's available
+#'   the archived url, if available.
+#'
+#' @examples \dontrun{memento_check("https://google.com")}
+memento_check <- function(url) {
+  response <- httr::GET(paste0("https://archive.md/timegate/", url)) 
+  
+  if (response$status_code==404) {
+    message(paste("No memento snapshot for url:", url))
+    return(list(url, FALSE, NA))
+  } else if (response$status_code==200) {
+    mementos <- response$all_headers
+    last <- mementos[[1]]$headers
+    last$location
+    return(list(url, TRUE, last$location, NA))
+  }
+}
+
 #' Get archiving data from a list of Urls
 #'
 #' @param lst A list of urls to check.
-#' @param method "wayback", "perma_cc" or "both".
+#' @param method "wayback", "perma_cc", "archivemd" or "both" (wayback and perma_cc).
 #' @export
 #' @return A dataframe containing the original urls,
 #'  availability, the archive url if it exists and a timestamp for the last
@@ -18,14 +43,18 @@
 view_archiv <- function (lst, method="wayback") {
   if (method == "perma_cc") {
     newlst <- lapply(lst, view_perma_cc)
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url", "available", "perma_cc_url", "timestamp")
     return(df)
   } else if (method == "wayback") {
     newlst <- lapply(lst, view_wayback)
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url","available", "wayback_url", "timestamp")
     return (df)
+  } else if (method == "archivemd") {
+    newlst <- lapply(lst, memento_check)
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
+    colnames(df) <- c("url","available", "archivemd_url", "timestamp")
   } else if (method == "both") {
     newlst <- lapply(lst, function(x) {
       wb <- view_wayback(x)
@@ -36,7 +65,7 @@ view_archiv <- function (lst, method="wayback") {
       }
       return(result)
     })
-    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=T))
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url",  "available", "wayback_url", "wayback_timestamp",
                       "perma_cc_url", "perma_cc_timestamp")
     return(df)
@@ -105,7 +134,7 @@ view_wayback <- function (url) {
     wb <- reply$archived_snapshots$closest
     result = list(url, wb$available, wb$url, wb$timestamp)
   } else {
-    print(paste("Received a NULL value from archived snapshots from Wayback for",
+    message(paste("Received a NULL value from archived snapshots from Wayback for",
                 url))
   }
   return (result)
@@ -149,7 +178,7 @@ view_perma_cc <- function (url) {
     message(paste("No perma.cc object found for ", url))
   } else {
     # something has gone actually wrong
-    warning ("An error occurred when retrieving perma_cc objects.")
+    warning("An error occurred when retrieving perma_cc objects.")
   }
   return(result)
 }
