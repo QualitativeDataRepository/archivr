@@ -19,14 +19,14 @@ memento_check <- function(url) {
     mementos <- response$all_headers
     last <- mementos[[1]]$headers
     last$location
-    return(list(url, TRUE, last$location))
+    return(list(url, TRUE, last$location, NA))
   }
 }
 
 #' Get archiving data from a list of Urls
 #'
 #' @param lst A list of urls to check.
-#' @param method "wayback", "perma_cc" or "both".
+#' @param method "wayback", "perma_cc", "archivemd" or "both" (wayback and perma_cc).
 #' @export
 #' @return A dataframe containing the original urls,
 #'  availability, the archive url if it exists and a timestamp for the last
@@ -51,6 +51,10 @@ view_archiv <- function (lst, method="wayback") {
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url","available", "wayback_url", "timestamp")
     return (df)
+  } else if (method == "archivemd") {
+    newlst <- lapply(lst, memento_check)
+    df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
+    colnames(df) <- c("url","available", "archivemd_url", "timestamp")
   } else if (method == "both") {
     newlst <- lapply(lst, function(x) {
       wb <- view_wayback(x)
