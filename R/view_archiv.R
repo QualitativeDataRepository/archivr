@@ -14,7 +14,7 @@ memento_check <- function(url) {
   
   if (response$status_code==404) {
     message(paste("No memento snapshot for url:", url))
-    return(list(url, FALSE, NA))
+    return(list(url, FALSE, NA, NA))
   } else if (response$status_code==200) {
     mementos <- response$all_headers
     last <- mementos[[1]]$headers
@@ -26,18 +26,18 @@ memento_check <- function(url) {
 #' Get archiving data from a list of Urls
 #'
 #' @param lst A list of urls to check.
-#' @param method "wayback", "perma_cc", "archivemd" or "both" (wayback and perma_cc).
+#' @param method "wayback", "perma_cc", "archivemd" or "all".
 #' @export
 #' @return A dataframe containing the original urls,
 #'  availability, the archive url if it exists and a timestamp for the last
 #'  web crawl.
 #'
-#'  Where method is "both", "availability" is TRUE if the URL is archived by either
+#'  Where method is "all", "availability" is TRUE if the URL is archived by either
 #'  service
 #' @examples
 #' \dontrun{
 #' urls <- c("https://qdr.syr.edu", "https://cran.r-project.org/", "https://apsa.net")
-#' checkArchiveStatus <- view_archiv(urls, method="both")
+#' checkArchiveStatus <- view_archiv(urls, method="all")
 #' }
 #'
 view_archiv <- function (lst, method="wayback") {
@@ -45,34 +45,38 @@ view_archiv <- function (lst, method="wayback") {
     newlst <- lapply(lst, view_perma_cc)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url", "available", "perma_cc_url", "timestamp")
-    return(df)
   } else if (method == "wayback") {
     newlst <- lapply(lst, view_wayback)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url","available", "wayback_url", "timestamp")
-    return (df)
   } else if (method == "archivemd") {
     newlst <- lapply(lst, memento_check)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url","available", "archivemd_url", "timestamp")
-  } else if (method == "both") {
+  } else if (method == "all") {
     newlst <- lapply(lst, function(x) {
       wb <- view_wayback(x)
       pc <- view_perma_cc(x)
-      result <- list(x,  FALSE, "url not found", "unknown", "url not found", "unknown")
-      if (isTRUE(wb[[2]]) || isTRUE(pc[[2]])) {
-        result <- c(wb[[1]], TRUE, wb[[3]], wb[[4]], pc[[3]], pc[[4]])
+      am <- memento_check(x)
+      result <- c(x,  FALSE, "url not found", "unknown", 
+                  "url not found", "unknown",
+                  "url not found", "unknown")
+      if (isTRUE(wb[[2]]) || isTRUE(pc[[2]]) || isTRUE(am[[2]])) {
+        result <- c(wb[[1]], TRUE, wb[[3]], wb[[4]], pc[[3]], pc[[4]],
+                    am[[3]], am[[4]])
       }
       return(result)
     })
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url",  "available", "wayback_url", "wayback_timestamp",
-                      "perma_cc_url", "perma_cc_timestamp")
-    return(df)
+                      "perma_cc_url", "perma_cc_timestamp", 
+                      "archivemd_url", "archivemd_timestamp")
   } else {
     warning ("Could not confirm method.")
     return(FALSE)
   }
+  df <- subset(df, available==TRUE)
+  return(df)
 }
 
 
