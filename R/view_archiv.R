@@ -75,7 +75,7 @@ view_archiv <- function (lst, method="wayback") {
     warning ("Could not confirm method.")
     return(FALSE)
   }
-  df <- subset(df, available==TRUE)
+  df <- df[df$available==TRUE, ]
   return(df)
 }
 
