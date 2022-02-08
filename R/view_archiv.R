@@ -14,7 +14,7 @@ memento_check <- function(url) {
   
   if (response$status_code==404) {
     message(paste("No memento snapshot for url:", url))
-    return(list(url, FALSE, NA))
+    return(list(url, FALSE, NA, NA))
   } else if (response$status_code==200) {
     mementos <- response$all_headers
     last <- mementos[[1]]$headers
@@ -45,12 +45,10 @@ view_archiv <- function (lst, method="wayback") {
     newlst <- lapply(lst, view_perma_cc)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url", "available", "perma_cc_url", "timestamp")
-    return(df)
   } else if (method == "wayback") {
     newlst <- lapply(lst, view_wayback)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
     colnames(df) <- c("url","available", "wayback_url", "timestamp")
-    return (df)
   } else if (method == "archivemd") {
     newlst <- lapply(lst, memento_check)
     df <- data.frame(matrix(unlist(newlst), nrow=length(newlst), byrow=TRUE))
@@ -60,7 +58,9 @@ view_archiv <- function (lst, method="wayback") {
       wb <- view_wayback(x)
       pc <- view_perma_cc(x)
       am <- memento_check(x)
-      result <- list(x,  FALSE, "url not found", "unknown", "url not found", "unknown")
+      result <- c(x,  FALSE, "url not found", "unknown", 
+                  "url not found", "unknown",
+                  "url not found", "unknown")
       if (isTRUE(wb[[2]]) || isTRUE(pc[[2]]) || isTRUE(am[[2]])) {
         result <- c(wb[[1]], TRUE, wb[[3]], wb[[4]], pc[[3]], pc[[4]],
                     am[[3]], am[[4]])
@@ -71,11 +71,12 @@ view_archiv <- function (lst, method="wayback") {
     colnames(df) <- c("url",  "available", "wayback_url", "wayback_timestamp",
                       "perma_cc_url", "perma_cc_timestamp", 
                       "archivemd_url", "archivemd_timestamp")
-    return(df)
   } else {
     warning ("Could not confirm method.")
     return(FALSE)
   }
+  df <- subset(df, available==TRUE)
+  return(df)
 }
 
 
