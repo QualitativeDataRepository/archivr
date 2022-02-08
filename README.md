@@ -1,10 +1,8 @@
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/QualitativeDataRepository/archivr.svg?branch=master)](https://travis-ci.org/QualitativeDataRepository/archivr)
-
- [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/foapvhn9t62mk1cu/branch/master?svg=true)](https://ci.appveyor.com/project/adam3smith/archivr/branch/master)
- 
-  [![Codecov test coverage](https://codecov.io/gh/QualitativeDataRepository/archivr/branch/master/graph/badge.svg)](https://codecov.io/gh/QualitativeDataRepository/archivr?branch=master)
+<!--[![Travis build status](https://travis-ci.org/QualitativeDataRepository/archivr.svg?branch=master)](https://travis-ci.org/QualitativeDataRepository/archivr)
+ [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/foapvhn9t62mk1cu/branch/master?svg=true)](https://ci.appveyor.com/project/adam3smith/archivr/branch/master)-->
+[![Codecov test coverage](https://codecov.io/gh/QualitativeDataRepository/archivr/branch/master/graph/badge.svg)](https://codecov.io/gh/QualitativeDataRepository/archivr?branch=master)
   <!-- badges: end --> 
 
 # Archivr
@@ -34,8 +32,7 @@ arc_df <- archiv(list("www.example.com", "NOTAURL", "www.github.com"))
 arc_df$way_back_url   
 #                                                        wayback_url
 # 1 http://web.archive.org/web/20190128171132/http://www.example.com
-# 2                                                    url not found
-# 3    http://web.archive.org/web/20190128171134/https://github.com/ ...
+# 2    http://web.archive.org/web/20190128171134/https://github.com/ ...
 ```
 
 
