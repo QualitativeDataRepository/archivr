@@ -95,6 +95,7 @@ archiv_perma <- function (arc_url) {
 }
 
 #' Save a url on the wayback machine.
+#' @param arc_url Url to archive
 #' @export
 #' @return A list representing the result.
 #' @examples

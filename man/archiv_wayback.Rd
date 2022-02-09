@@ -6,6 +6,9 @@
 \usage{
 archiv_wayback(arc_url)
 }
+\arguments{
+\item{arc_url}{Url to archive}
+}
 \value{
 A list representing the result.
 }
