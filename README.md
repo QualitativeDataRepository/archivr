@@ -1,7 +1,7 @@
 # Archivr
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/QualitativeDataRepository/archivr/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/QualitativeDataRepository/archivr/actions/workflows/check-standard.yaml)
+[![R-CMD-check](https://github.com/QualitativeDataRepository/archivr/actions/workflows/check-full.yaml/badge.svg)](https://github.com/QualitativeDataRepository/archivr/actions/workflows/check-full.yaml)
 [![Codecov test coverage](https://codecov.io/gh/QualitativeDataRepository/archivr/branch/master/graph/badge.svg)](https://codecov.io/gh/QualitativeDataRepository/archivr?branch=master)
   <!-- badges: end --> 
 
