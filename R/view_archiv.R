@@ -75,7 +75,9 @@ view_archiv <- function (lst, method="wayback") {
     warning ("Could not confirm method.")
     return(FALSE)
   }
-  df <- df[df$available==TRUE, ]
+  
+  
+  df <- df[as.logical(df$available)==TRUE, ]
   return(df)
 }
 

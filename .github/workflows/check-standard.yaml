@@ -38,6 +38,12 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+          
+      - name: Prevent Windows from installing non-binary packages
+        if: ${{ matrix.config.os == 'windows-latest'  }}
+        shell: bash
+        run: |
+          echo 'options(install.packages.check.source = "no")' >>  .Rprofile
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:

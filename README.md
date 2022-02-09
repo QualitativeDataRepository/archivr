@@ -1,10 +1,9 @@
+# Archivr
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/QualitativeDataRepository/archivr/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/QualitativeDataRepository/archivr/actions/workflows/check-standard.yaml)
 [![Codecov test coverage](https://codecov.io/gh/QualitativeDataRepository/archivr/branch/master/graph/badge.svg)](https://codecov.io/gh/QualitativeDataRepository/archivr?branch=master)
   <!-- badges: end --> 
-
-# Archivr
 
 Archivr is a project by the [Qualitative Data Repository](https://qdr.syr.edu/)
 that automates preservation of urls in Web Archives.
