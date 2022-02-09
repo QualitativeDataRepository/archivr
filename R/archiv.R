@@ -68,12 +68,17 @@ archiv_perma <- function (arc_url) {
   }
   folder_url <- paste0()
   api_url <- paste0(.perma_cc_post_api_url, api)
-  setting <- new_handle()
-  handle_setopt(setting, customrequest = "POST")
-  handle_setform(setting, url = arc_url, folder = fold)
-  result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
-  r <- curl_fetch_memory(api_url, setting)
-  reply <- fromJSON(rawToChar(r$content))
+  
+  #setting <- new_handle()
+  #handle_setopt(setting, customrequest = "POST")
+  #handle_setform(setting, url = arc_url, folder = fold)
+  #result <- list(arc_url, "noguid", "unknown", "no url", "no screenshot", "no short url")
+  #r <- curl_fetch_memory(api_url, setting)
+  #reply <- fromJSON(rawToChar(r$content))
+  
+  params <- list(url = arc_url, folder = fold)
+  reply <- httr::content(httr::POST(api_url, body = params, encode="json"))
+  
   if ((!(is.null(reply$detail))) && reply$detail == "Authentication credentials
       were not provided.") {
     stop("Please input your api key:\nUse 'set_api_key(API_KEY)'")
@@ -91,8 +96,6 @@ archiv_perma <- function (arc_url) {
 }
 
 #' Save a url on the wayback machine.
-#' @param arc_url - the url to archive.
-#' @import curl
 #' @export
 #' @return A list representing the result.
 #' @examples
@@ -101,7 +104,7 @@ archiv_perma <- function (arc_url) {
 #' }
 archiv_wayback <- function (arc_url) {
   envelop <- paste0(.wb_save_url, arc_url)
-  reply <- curl_fetch_memory(envelop)
+  reply <- httr::GET(envelop)
   if (reply$status_code == 200) {
     result <- view_wayback(arc_url)
   } else {
@@ -111,8 +114,6 @@ archiv_wayback <- function (arc_url) {
   }
   return(result)
 }
-
-
 
 #' Save the links in a url in perma.cc or Wayback.
 #'

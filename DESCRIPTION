@@ -13,7 +13,6 @@ Imports:
     rvest,
     readtext,
     xml2,
-    curl,
     jsonlite,
     tools,
     httr

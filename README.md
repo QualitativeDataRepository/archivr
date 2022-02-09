@@ -1,7 +1,6 @@
 
 <!-- badges: start -->
-<!--[![Travis build status](https://travis-ci.org/QualitativeDataRepository/archivr.svg?branch=master)](https://travis-ci.org/QualitativeDataRepository/archivr)
- [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/foapvhn9t62mk1cu/branch/master?svg=true)](https://ci.appveyor.com/project/adam3smith/archivr/branch/master)-->
+[![R-CMD-check](https://github.com/QualitativeDataRepository/archivr/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/QualitativeDataRepository/archivr/actions/workflows/check-standard.yaml)
 [![Codecov test coverage](https://codecov.io/gh/QualitativeDataRepository/archivr/branch/master/graph/badge.svg)](https://codecov.io/gh/QualitativeDataRepository/archivr?branch=master)
   <!-- badges: end --> 
 
