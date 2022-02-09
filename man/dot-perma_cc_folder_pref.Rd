@@ -4,7 +4,9 @@
 \name{.perma_cc_folder_pref}
 \alias{.perma_cc_folder_pref}
 \title{Global var for the API key for perma.cc}
-\format{An object of class \code{character} of length 1.}
+\format{
+An object of class \code{character} of length 1.
+}
 \usage{
 .perma_cc_folder_pref
 }

@@ -4,7 +4,9 @@
 \name{.wb_available_url}
 \alias{.wb_available_url}
 \title{Default url for the Wayback Machine}
-\format{An object of class \code{character} of length 1.}
+\format{
+An object of class \code{character} of length 1.
+}
 \usage{
 .wb_available_url
 }
