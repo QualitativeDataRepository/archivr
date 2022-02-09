@@ -49,7 +49,6 @@ archiv <- function (url_list, method="wayback") {
 #'
 #' @param arc_url The url to archive.
 #' @importFrom jsonlite fromJSON
-#' @import curl
 #' @export
 #' @return A list or object representing the result.
 #' @examples
